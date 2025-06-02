@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 script.src = `tools/${toolName}/script.js`;
                 toolContainer.appendChild(script);
             }
-            
+            console.log(`Loaded tool: ${toolName}`); // Debug log
         } catch (error) {
             toolContainer.innerHTML = `
                 <div class="error">
