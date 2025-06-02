@@ -208,4 +208,66 @@
                     month: 'long',
                     day: 'numeric',
                     hour: '2-digit',
-                    minute
+                    minute: '2-digit',
+                    hour12: true
+                });
+
+                const nextPhases = calculateNextPhases(selectedDate);
+                phaseListElement.innerHTML = nextPhases.map(phase => 
+                    `<div>${phase.name}: ${phase.date}</div>`
+                ).join('');
+
+                console.log('UI updated successfully');
+            } else {
+                console.error('One or more DOM elements not found');
+            }
+        } catch (error) {
+            console.error('Error in updateMoonPhase:', error);
+        }
+    }
+
+    function resetToCurrentDate() {
+        const dateInput = document.getElementById('date-input');
+        if (dateInput) {
+            dateInput.value = ''; // Clear the date picker
+        }
+        updateMoonPhase();
+    }
+
+    // Initial setup
+    updateMoonPhase();
+
+    // Refresh button
+    const refreshBtn = document.getElementById('refresh-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', resetToCurrentDate);
+    } else {
+        console.error('Refresh button not found');
+    }
+
+    // Date picker change event
+    const dateInput = document.getElementById('date-input');
+    if (dateInput) {
+        dateInput.addEventListener('change', updateMoonPhase);
+    } else {
+        console.error('Date input not found');
+    }
+
+    // Cleanup event listeners when the tool is unloaded
+    function cleanup() {
+        if (refreshBtn) {
+            refreshBtn.removeEventListener('click', resetToCurrentDate);
+        }
+        if (dateInput) {
+            dateInput.removeEventListener('change', updateMoonPhase);
+        }
+        console.log('Moon Phase tool cleaned up');
+    }
+
+    // Listen for toolChange event to cleanup
+    document.addEventListener('toolChange', function (e) {
+        if (e.detail.tool !== 'moon-phase') {
+            cleanup();
+        }
+    });
+})();
