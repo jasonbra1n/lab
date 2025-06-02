@@ -20,13 +20,11 @@
                 throw new Error('Astronomy Engine not loaded');
             }
 
-            // Use Astronomy Engine to get the moon's illumination
             const illumination = Astronomy.Illumination(Astronomy.Body.Moon, date);
-            const age = illumination.age; // Days since the last New Moon
-            const phaseFraction = age / 29.53058867; // Normalize to lunar cycle
+            const age = illumination.age;
+            const phaseFraction = age / 29.53058867;
             const cycleDays = age % 29.53058867;
 
-            // Determine phase based on illumination fraction and age
             let phaseName, visualChar;
             if (phaseFraction < 0.25) {
                 phaseName = 'New Moon';
@@ -80,9 +78,9 @@
         let searchDate = new Date(date);
 
         const phaseTypes = [
-            { name: 'Full Moon', illumination: 180 }, // Full Moon at 180 degrees
-            { name: 'Last Quarter', illumination: 270 }, // Last Quarter at 270 degrees
-            { name: 'New Moon', illumination: 0 } // New Moon at 0 degrees
+            { name: 'Full Moon', illumination: 180 },
+            { name: 'Last Quarter', illumination: 270 },
+            { name: 'New Moon', illumination: 0 }
         ];
 
         for (let i = 0; i < 3; i++) {
@@ -98,7 +96,7 @@
                         day: 'numeric'
                     })
                 });
-                searchDate = new Date(searchResult.getTime() + 24 * 60 * 60 * 1000); // Move past this phase
+                searchDate = new Date(searchResult.getTime() + 24 * 60 * 60 * 1000);
             } else {
                 nextPhases.push({ name: nextPhase.name, date: 'N/A' });
             }
@@ -161,7 +159,7 @@
         } else {
             updateMoonPhase();
         }
-    }, 2000); // Wait 2 seconds for CDN to load
+    }, 2000);
 
     // Refresh button
     const refreshBtn = document.getElementById('refresh-btn');
