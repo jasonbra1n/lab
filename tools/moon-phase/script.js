@@ -1,228 +1,196 @@
 (function () {
-    // Get the astronomyLoaded state from the script tag
-    const scriptElement = document.querySelector('script[src="tools/moon-phase/script.js"]');
-    const astronomyLoaded = scriptElement.getAttribute('data-astronomy-loaded') === 'true';
+    // The Astronomy Engine is no longer used, so no need to check if it's loaded.
 
     function getMoonPhase(date) {
-        try {
-            if (!astronomyLoaded) {
-                throw new Error('Astronomy Engine not loaded');
-            }
+        // Fallback to approximate calculation (now the primary method)
+        const referenceNewMoon = new Date('2000-01-06T00:00:00Z'); // A known New Moon date
+        const lunarCycle = 29.53058867; // Average lunar cycle in days
 
-            // Ensure the date is in UTC
-            const utcDate = new Date(Date.UTC(
-                date.getUTCFullYear(),
-                date.getUTCMonth(),
-                date.getUTCDate(),
-                date.getUTCHours(),
-                date.getUTCMinutes(),
-                date.getUTCSeconds()
-            ));
-
-            console.log('Calling Astronomy.Illumination with date:', utcDate);
-            const illumination = Astronomy.Illumination(Astronomy.Body.Moon, utcDate);
-            console.log('Illumination result:', illumination);
-
-            if (!illumination || typeof illumination.age !== 'number') {
-                throw new Error('Invalid illumination data returned from Astronomy Engine');
-            }
-
-            const age = illumination.age;
-            const phaseFraction = age / 29.53058867;
-            const cycleDays = age % 29.53058867;
-
-            let phaseName, visualChar;
-            if (phaseFraction < 0.25) {
-                phaseName = 'New Moon';
-                visualChar = '🌑';
-            } else if (phaseFraction < 0.5) {
-                phaseName = 'Waxing Crescent';
-                visualChar = '🌒';
-            } else if (phaseFraction < 0.75) {
-                if (cycleDays < 8.5) {
-                    phaseName = 'First Quarter';
-                    visualChar = '🌓';
-                } else if (cycleDays < 13.5) {
-                    phaseName = 'Waxing Gibbous';
-                    visualChar = '🌔';
-                } else {
-                    phaseName = 'Full Moon';
-                    visualChar = '🌕';
-                }
-            } else {
-                if (cycleDays < 21.5) {
-                    phaseName = 'Waning Gibbous';
-                    visualChar = '🌖';
-                } else if (cycleDays < 23.5) {
-                    phaseName = 'Last Quarter';
-                    visualChar = '🌗';
-                } else {
-                    phaseName = 'Waning Crescent';
-                    visualChar = '🌘';
-                }
-            }
-
-            console.log(`Calculated phase: ${phaseName}, Age: ${age.toFixed(2)} days`);
-            return { phaseName, visualChar, cycleDays, age };
-        } catch (error) {
-            console.error('Error in getMoonPhase:', error);
-            // Fallback to approximate calculation
-            const referenceNewMoon = new Date('2000-01-06T00:00:00Z');
-            const lunarCycle = 29.53058867; // Average lunar cycle in days
-            const timeDiff = date.getTime() - referenceNewMoon.getTime();
-            const daysSinceNewMoon = (timeDiff / (1000 * 60 * 60 * 24)) % lunarCycle;
-            const cycleDays = daysSinceNewMoon;
-
-            let phaseName, visualChar;
-            if (cycleDays < 1) {
-                phaseName = 'New Moon';
-                visualChar = '🌑';
-            } else if (cycleDays < 6.5) {
-                phaseName = 'Waxing Crescent';
-                visualChar = '🌒';
-            } else if (cycleDays < 8.5) {
-                phaseName = 'First Quarter';
-                visualChar = '🌓';
-            } else if (cycleDays < 13.5) {
-                phaseName = 'Waxing Gibbous';
-                visualChar = '🌔';
-            } else if (cycleDays < 16.5) {
-                phaseName = 'Full Moon';
-                visualChar = '🌕';
-            } else if (cycleDays < 21.5) {
-                phaseName = 'Waning Gibbous';
-                visualChar = '🌖';
-            } else if (cycleDays < 23.5) {
-                phaseName = 'Last Quarter';
-                visualChar = '🌗';
-            } else if (cycleDays < 28.5) {
-                phaseName = 'Waning Crescent';
-                visualChar = '🌘';
-            } else {
-                phaseName = 'New Moon';
-                visualChar = '🌑';
-            }
-
-            console.log(`Fallback - Calculated phase: ${phaseName}, Days in cycle: ${cycleDays.toFixed(2)}`);
-            return { phaseName, visualChar, cycleDays, age: cycleDays };
-        }
-    }
-
-    function calculateNextPhases(date) {
-        if (!astronomyLoaded) {
-            console.error('Astronomy Engine not loaded, cannot calculate upcoming phases');
-            return [
-                { name: 'Full Moon', date: 'N/A' },
-                { name: 'Last Quarter', date: 'N/A' },
-                { name: 'New Moon', date: 'N/A' }
-            ];
-        }
-
-        const nextPhases = [];
-        let searchDate = new Date(Date.UTC(
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate(),
-            date.getUTCHours(),
-            date.getUTCMinutes(),
-            date.getUTCSeconds()
+        // Ensure the date is processed as UTC to match the referenceNewMoon which is in UTC
+        const utcDate = new Date(Date.UTC(
+            date.getFullYear(), // Use getFullYear for local date, then convert to UTC parts
+            date.getMonth(),
+            date.getDate(),
+            date.getHours(),
+            date.getMinutes(),
+            date.getSeconds()
         ));
 
-        const phaseTypes = [
-            { name: 'Full Moon', illumination: 180 },
-            { name: 'Last Quarter', illumination: 270 },
-            { name: 'New Moon', illumination: 0 }
+        const timeDiff = utcDate.getTime() - referenceNewMoon.getTime();
+        let cycleDays = (timeDiff / (1000 * 60 * 60 * 24)) % lunarCycle;
+        if (cycleDays < 0) { // Ensure cycleDays is positive
+            cycleDays += lunarCycle;
+        }
+
+        let phaseName, visualChar;
+        // Determine phase based on the day in the lunar cycle
+        if (cycleDays < 1) {
+            phaseName = 'New Moon';
+            visualChar = '🌑';
+        } else if (cycleDays < 6.3826) { // Approx. 29.53 * (1/4) * (1/2) + 1  (Midpoint of New Moon to First Quarter)
+            phaseName = 'Waxing Crescent';
+            visualChar = '🌒';
+        } else if (cycleDays < 8.3826) { // Approx. 29.53 * (1/4) + 1
+            phaseName = 'First Quarter';
+            visualChar = '🌓';
+        } else if (cycleDays < 13.7652) { // Approx. 29.53 * (1/2) * (1/2) + 7.3826 (Midpoint of First Quarter to Full Moon)
+            phaseName = 'Waxing Gibbous';
+            visualChar = '🌔';
+        } else if (cycleDays < 16.7652) { // Approx. 29.53 * (1/2) + 1
+            phaseName = 'Full Moon';
+            visualChar = '🌕';
+        } else if (cycleDays < 21.1478) { // Approx. 29.53 * (3/4) * (1/2) + 14.7652 (Midpoint of Full Moon to Last Quarter)
+            phaseName = 'Waning Gibbous';
+            visualChar = '🌖';
+        } else if (cycleDays < 23.1478) { // Approx. 29.53 * (3/4) + 1
+            phaseName = 'Last Quarter';
+            visualChar = '🌗';
+        } else if (cycleDays < 28.5305) { // Approx. 29.53 * (1) * (1/2) + 22.1478 (Midpoint of Last Quarter to New Moon)
+            phaseName = 'Waning Crescent';
+            visualChar = '🌘';
+        } else {
+            phaseName = 'New Moon'; // End of cycle, back to New Moon
+            visualChar = '🌑';
+        }
+        
+        // The 'age' variable here represents days into the current approximate cycle.
+        console.log(`Internal calculation - Phase: ${phaseName}, Cycle Day: ${cycleDays.toFixed(2)}`);
+        return { phaseName, visualChar, cycleDays, age: cycleDays };
+    }
+
+    function calculateNextPhases(currentDate) {
+        const nextPhases = [];
+        const lunarCycle = 29.53058867;
+        const referenceNewMoon = new Date('2000-01-06T00:00:00Z');
+
+        // Ensure currentDate is processed as UTC for calculations
+        const utcCurrentDate = new Date(Date.UTC(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate()
+        )); // Time components are not strictly necessary here as we deal with days
+
+        const timeDiffCurrent = utcCurrentDate.getTime() - referenceNewMoon.getTime();
+        let daysIntoCurrentCycle = (timeDiffCurrent / (1000 * 60 * 60 * 24)) % lunarCycle;
+        if (daysIntoCurrentCycle < 0) {
+            daysIntoCurrentCycle += lunarCycle;
+        }
+
+        const phaseTargets = [
+            { name: 'New Moon', targetCycleDay: 0 }, // Or lunarCycle for the *next* new moon
+            { name: 'First Quarter', targetCycleDay: lunarCycle * 0.25 },
+            { name: 'Full Moon', targetCycleDay: lunarCycle * 0.5 },
+            { name: 'Last Quarter', targetCycleDay: lunarCycle * 0.75 }
         ];
+        
+        // We want to find the next upcoming New Moon, Full Moon, and Last Quarter
+        // For simplicity, we'll list the next instances of these major phases
+        // starting from after the current date.
 
-        for (let i = 0; i < 3; i++) {
-            const nextPhase = phaseTypes[i % phaseTypes.length];
-            try {
-                console.log(`Searching for ${nextPhase.name} with date:`, searchDate);
-                const searchResult = Astronomy.SearchMoonPhase(nextPhase.illumination, searchDate);
-                console.log(`${nextPhase.name} result:`, searchResult);
+        let searchStartDate = new Date(utcCurrentDate);
 
-                if (searchResult) {
-                    nextPhases.push({
-                        name: nextPhase.name,
-                        date: searchResult.toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        })
-                    });
-                    searchDate = new Date(searchResult.getTime() + 24 * 60 * 60 * 1000);
-                } else {
-                    nextPhases.push({ name: nextPhase.name, date: 'N/A' });
-                }
-            } catch (error) {
-                console.error(`Error calculating ${nextPhase.name}:`, error);
-                // Fallback to approximate calculation
-                const lunarCycle = 29.53058867;
-                const referenceNewMoon = new Date('2000-01-06T00:00:00Z');
-                const timeDiff = date.getTime() - referenceNewMoon.getTime();
-                const daysSinceNewMoon = (timeDiff / (1000 * 60 * 60 * 24)) % lunarCycle;
-                let daysToPhase;
-                if (nextPhase.name === 'Full Moon') {
-                    daysToPhase = 16.5 - daysSinceNewMoon;
-                } else if (nextPhase.name === 'Last Quarter') {
-                    daysToPhase = 23.5 - daysSinceNewMoon;
-                } else {
-                    daysToPhase = 29.53058867 - daysSinceNewMoon;
-                }
-                const phaseDate = new Date(date.getTime() + daysToPhase * 24 * 60 * 60 * 1000);
-                nextPhases.push({
-                    name: nextPhase.name,
+        // Find the next New Moon to align our search
+        let daysToNextNewMoon = lunarCycle - daysIntoCurrentCycle;
+        if (daysToNextNewMoon < 0) daysToNextNewMoon += lunarCycle; // Should already be positive if daysIntoCurrentCycle is correct
+        if (daysToNextNewMoon > (lunarCycle -1) && daysToNextNewMoon < (lunarCycle +1) ) daysToNextNewMoon = 0; // If it's practically new moon day
+
+        let nextNewMoonDate = new Date(searchStartDate.getTime() + daysToNextNewMoon * 24 * 60 * 60 * 1000);
+        
+        // Add upcoming phases relative to the next New Moon
+        const upcoming = [
+            { name: 'New Moon', offset: 0 },
+            { name: 'First Quarter', offset: lunarCycle * 0.25 },
+            { name: 'Full Moon', offset: lunarCycle * 0.5 },
+            { name: 'Last Quarter', offset: lunarCycle * 0.75 },
+            { name: 'New Moon', offset: lunarCycle }, // Next new moon
+            { name: 'First Quarter', offset: lunarCycle * 1.25 },
+            { name: 'Full Moon', offset: lunarCycle * 1.5 },
+            // Add more if needed
+        ];
+        
+        let addedPhasesCount = 0;
+        for (const phase of upcoming) {
+            const phaseDate = new Date(nextNewMoonDate.getTime() + phase.offset * 24 * 60 * 60 * 1000);
+            // Ensure the phaseDate is after or on the current displayed date (adjusted for UTC)
+            if (phaseDate.getTime() >= utcCurrentDate.getTime()) {
+                 nextPhases.push({
+                    name: phase.name,
                     date: phaseDate.toLocaleDateString('en-US', {
+                        timeZone: 'UTC', // Display the UTC date
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                     })
                 });
-                searchDate = new Date(phaseDate.getTime() + 24 * 60 * 60 * 1000);
+                addedPhasesCount++;
+                if (addedPhasesCount >= 3) break; // Get the next 3 distinct major phases
             }
         }
+        
+        // If less than 3 phases found (e.g. near end of a known cycle definition), 
+        // this may need more robust future projection.
+        // The current approach shows next occurrences based on a calculated upcoming new moon.
 
+        console.log('Internal calculation - Upcoming phases:', nextPhases);
         return nextPhases;
     }
 
     function updateMoonPhase() {
         try {
             const dateInput = document.getElementById('date-input');
-            let selectedDate = dateInput.value ? new Date(dateInput.value + 'T12:00:00Z') : new Date();
+            // Use local time from date picker, then convert to UTC for calculation if needed.
+            // Default to current local time.
+            let selectedDate;
+            if (dateInput.value) {
+                // Input type="date" provides value as YYYY-MM-DD.
+                // Interpret this as local date, and set time to midday to avoid timezone shifts affecting the date itself.
+                const [year, month, day] = dateInput.value.split('-').map(Number);
+                selectedDate = new Date(year, month - 1, day, 12, 0, 0); // Local time
+            } else {
+                selectedDate = new Date(); // Current local time
+            }
 
-            const { phaseName, visualChar, cycleDays, age } = getMoonPhase(selectedDate);
+            const { phaseName, visualChar } = getMoonPhase(selectedDate);
 
             const phaseNameElement = document.getElementById('phase-name');
             const moonVisualElement = document.getElementById('moon-visual');
             const currentDateElement = document.getElementById('current-date');
             const phaseListElement = document.getElementById('phase-list');
+            const loadingStatusElement = document.getElementById('loading-status');
 
             if (phaseNameElement && moonVisualElement && currentDateElement && phaseListElement) {
                 phaseNameElement.textContent = phaseName;
                 moonVisualElement.textContent = visualChar;
+                
+                // Display selectedDate in local time format
                 currentDateElement.textContent = selectedDate.toLocaleDateString('en-US', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
+                    day: 'numeric'
                 });
 
-                const nextPhases = calculateNextPhases(selectedDate);
-                phaseListElement.innerHTML = nextPhases.map(phase => 
+                const nextPhasesData = calculateNextPhases(selectedDate);
+                phaseListElement.innerHTML = nextPhasesData.map(phase => 
                     `<div>${phase.name}: ${phase.date}</div>`
                 ).join('');
-
-                console.log('UI updated successfully');
+                
+                if(loadingStatusElement) {
+                    loadingStatusElement.textContent = ''; // Clear "Loading..." message
+                    loadingStatusElement.style.display = 'none'; // Hide it
+                }
+                console.log('UI updated successfully using internal calculation');
             } else {
-                console.error('One or more DOM elements not found');
+                console.error('One or more DOM elements not found for UI update');
             }
         } catch (error) {
             console.error('Error in updateMoonPhase:', error);
+            const loadingStatusElement = document.getElementById('loading-status');
+            if(loadingStatusElement) {
+                loadingStatusElement.textContent = 'Error updating moon phase.';
+                loadingStatusElement.style.display = 'block';
+            }
         }
     }
 
@@ -265,9 +233,16 @@
     }
 
     // Listen for toolChange event to cleanup
-    document.addEventListener('toolChange', function (e) {
-        if (e.detail.tool !== 'moon-phase') {
+    // Ensure this event is dispatched by your main script when tools are switched
+    document.addEventListener('toolChange', function handleToolChange(event) {
+        // Assuming your main script's event.detail.tool provides the new tool's name
+        if (event.detail.tool !== 'moon-phase') {
             cleanup();
+            // It's good practice to remove the event listener itself if the tool is permanently unloaded
+            // or ensure it doesn't fire again if this script instance is discarded.
+            // However, if this script is re-evaluated on each tool load, this is fine.
+            document.removeEventListener('toolChange', handleToolChange); // Self-removal if appropriate
         }
     });
+
 })();
