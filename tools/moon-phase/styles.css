@@ -37,6 +37,46 @@
     color: var(--text-color);
 }
 
+.date-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-picker label {
+    font-size: 1em;
+    color: var(--text-color);
+}
+
+.date-picker input[type="date"] {
+    padding: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1em;
+}
+
+.next-phases {
+    width: 100%;
+    text-align: center;
+}
+
+.next-phases h3 {
+    font-size: 1.2em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.phase-list {
+    font-size: 1em;
+    color: var(--text-color);
+}
+
+.phase-list div {
+    margin: 5px 0;
+}
+
 @media (max-width: 500px) {
     .moon-phase {
         padding: 15px;
@@ -52,6 +92,23 @@
     }
 
     .phase-date {
+        font-size: 0.9em;
+    }
+
+    .date-picker {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .date-picker input[type="date"] {
+        width: 100%;
+    }
+
+    .next-phases h3 {
+        font-size: 1.1em;
+    }
+
+    .phase-list {
         font-size: 0.9em;
     }
 }
