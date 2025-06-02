@@ -1,108 +1,80 @@
 (function () {
-    function calculateMoonPhase(date) {
+    function getMoonPhase(date) {
         try {
-            // Reference New Moon: January 6, 2000 (approximate for simplicity)
-            const referenceNewMoon = new Date('2000-01-06T00:00:00Z');
-            const lunarCycle = 29.53058867; // Average lunar cycle in days
+            // Use Astronomy Engine to get the moon's illumination
+            const illumination = Astronomy.Illumination(Astronomy.Body.Moon, date);
+            const age = illumination.age; // Days since the last New Moon
+            const phaseFraction = age / 29.53058867; // Normalize to lunar cycle
+            const cycleDays = age % 29.53058867;
 
-            // Calculate days since the reference New Moon
-            const timeDiff = date.getTime() - referenceNewMoon.getTime();
-            const daysSinceNewMoon = (timeDiff / (1000 * 60 * 60 * 24)) % lunarCycle;
-
-            // Normalize to a 0-1 cycle (0 = New Moon, 0.5 = Full Moon)
-            const cycleFraction = daysSinceNewMoon / lunarCycle;
-            const cycleDays = daysSinceNewMoon;
-
-            // Determine the moon phase based on the cycle fraction
-            let phaseName, visualChar, phaseIndex;
-            if (cycleDays < 1) {
+            // Determine phase based on illumination fraction and age
+            let phaseName, visualChar;
+            if (phaseFraction < 0.25) {
                 phaseName = 'New Moon';
                 visualChar = '🌑';
-                phaseIndex = 0;
-            } else if (cycleDays < 6.5) {
+            } else if (phaseFraction < 0.5) {
                 phaseName = 'Waxing Crescent';
                 visualChar = '🌒';
-                phaseIndex = 1;
-            } else if (cycleDays < 8.5) {
-                phaseName = 'First Quarter';
-                visualChar = '🌓';
-                phaseIndex = 2;
-            } else if (cycleDays < 13.5) {
-                phaseName = 'Waxing Gibbous';
-                visualChar = '🌔';
-                phaseIndex = 3;
-            } else if (cycleDays < 16.5) {
-                phaseName = 'Full Moon';
-                visualChar = '🌕';
-                phaseIndex = 4;
-            } else if (cycleDays < 21.5) {
-                phaseName = 'Waning Gibbous';
-                visualChar = '🌖';
-                phaseIndex = 5;
-            } else if (cycleDays < 23.5) {
-                phaseName = 'Last Quarter';
-                visualChar = '🌗';
-                phaseIndex = 6;
-            } else if (cycleDays < 28.5) {
-                phaseName = 'Waning Crescent';
-                visualChar = '🌘';
-                phaseIndex = 7;
+            } else if (phaseFraction < 0.75) {
+                if (cycleDays < 8.5) {
+                    phaseName = 'First Quarter';
+                    visualChar = '🌓';
+                } else if (cycleDays < 13.5) {
+                    phaseName = 'Waxing Gibbous';
+                    visualChar = '🌔';
+                } else {
+                    phaseName = 'Full Moon';
+                    visualChar = '🌕';
+                }
             } else {
-                phaseName = 'New Moon';
-                visualChar = '🌑';
-                phaseIndex = 0;
+                if (cycleDays < 21.5) {
+                    phaseName = 'Waning Gibbous';
+                    visualChar = '🌖';
+                } else if (cycleDays < 23.5) {
+                    phaseName = 'Last Quarter';
+                    visualChar = '🌗';
+                } else {
+                    phaseName = 'Waning Crescent';
+                    visualChar = '🌘';
+                }
             }
 
-            console.log(`Calculated phase: ${phaseName}, Days in cycle: ${cycleDays.toFixed(2)}`);
-            return { phaseName, visualChar, cycleDays, phaseIndex };
+            console.log(`Calculated phase: ${phaseName}, Age: ${age.toFixed(2)} days`);
+            return { phaseName, visualChar, cycleDays, age };
         } catch (error) {
-            console.error('Error in calculateMoonPhase:', error);
-            return { phaseName: 'Error', visualChar: '❓', cycleDays: 0, phaseIndex: -1 };
+            console.error('Error in getMoonPhase:', error);
+            return { phaseName: 'Error', visualChar: '❓', cycleDays: 0, age: 0 };
         }
     }
 
-    function calculateNextPhases(date, currentCycleDays, currentPhaseIndex) {
+    function calculateNextPhases(date) {
+        const nextPhases = [];
         const lunarCycle = 29.53058867; // Average lunar cycle in days
-        const phaseDurations = [
-            { name: 'New Moon', threshold: 1, index: 0 },
-            { name: 'Waxing Crescent', threshold: 6.5, index: 1 },
-            { name: 'First Quarter', threshold: 8.5, index: 2 },
-            { name: 'Waxing Gibbous', threshold: 13.5, index: 3 },
-            { name: 'Full Moon', threshold: 16.5, index: 4 },
-            { name: 'Waning Gibbous', threshold: 21.5, index: 5 },
-            { name: 'Last Quarter', threshold: 23.5, index: 6 },
-            { name: 'Waning Crescent', threshold: 28.5, index: 7 },
-            { name: 'New Moon', threshold: lunarCycle, index: 0 }
+
+        // Define the major phases we want to predict
+        const phaseTypes = [
+            { name: 'Full Moon', illumination: 1.0 },
+            { name: 'Last Quarter', illumination: 0.5 },
+            { name: 'New Moon', illumination: 0.0 }
         ];
 
-        const nextPhases = [];
-        let remainingDays = currentCycleDays;
-        let currentIndex = currentPhaseIndex;
-
-        // Calculate the next three phases
+        // Start with the current date and find the next three phases
+        let searchDate = new Date(date);
         for (let i = 0; i < 3; i++) {
-            // Move to the next phase index
-            currentIndex = (currentIndex + 1) % 8;
-            const nextPhase = phaseDurations[currentIndex === 0 ? 8 : currentIndex];
-            const daysUntilNextPhase = nextPhase.threshold - remainingDays;
-
-            // If daysUntilNextPhase is negative, it means we’ve passed this threshold in the current cycle
-            // Add a full lunar cycle and adjust
-            const daysToAdd = daysUntilNextPhase <= 0 ? lunarCycle + (nextPhase.threshold - remainingDays) : daysUntilNextPhase;
-            const nextPhaseDate = new Date(date.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
-
-            nextPhases.push({
-                name: nextPhase.name,
-                date: nextPhaseDate.toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                })
-            });
-
-            // Update remaining days for the next iteration (reset to 0 after a full cycle)
-            remainingDays = (remainingDays + daysToAdd) % lunarCycle || 0;
+            const nextPhase = phaseTypes[i % phaseTypes.length];
+            const searchResult = Astronomy.SearchMoonPhase(nextPhase.illumination, searchDate);
+            if (searchResult) {
+                nextPhases.push({
+                    name: nextPhase.name,
+                    date: searchResult.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })
+                });
+                searchDate = new Date(searchResult.getTime() + 24 * 60 * 60 * 1000); // Move past this phase
+            }
         }
 
         return nextPhases;
@@ -114,7 +86,7 @@
             const dateInput = document.getElementById('date-input');
             let selectedDate = dateInput.value ? new Date(dateInput.value + 'T12:00:00') : new Date();
 
-            const { phaseName, visualChar, cycleDays, phaseIndex } = calculateMoonPhase(selectedDate);
+            const { phaseName, visualChar, cycleDays, age } = getMoonPhase(selectedDate);
 
             // Update the UI
             const phaseNameElement = document.getElementById('phase-name');
@@ -136,7 +108,7 @@
                 });
 
                 // Calculate and display the next three phases
-                const nextPhases = calculateNextPhases(selectedDate, cycleDays, phaseIndex);
+                const nextPhases = calculateNextPhases(selectedDate);
                 phaseListElement.innerHTML = nextPhases.map(phase => 
                     `<div>${phase.name}: ${phase.date}</div>`
                 ).join('');
