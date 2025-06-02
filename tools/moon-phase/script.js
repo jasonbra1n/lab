@@ -9,7 +9,21 @@
                 throw new Error('Astronomy Engine not loaded');
             }
 
-            const illumination = Astronomy.Illumination(Astronomy.Body.Moon, date);
+            // Ensure the date is in UTC
+            const utcDate = new Date(Date.UTC(
+                date.getUTCFullYear(),
+                date.getUTCMonth(),
+                date.getUTCDate(),
+                date.getUTCHours(),
+                date.getUTCMinutes(),
+                date.getUTCSeconds()
+            ));
+
+            const illumination = Astronomy.Illumination(Astronomy.Body.Moon, utcDate);
+            if (!illumination || typeof illumination.age !== 'number') {
+                throw new Error('Invalid illumination data returned from Astronomy Engine');
+            }
+
             const age = illumination.age;
             const phaseFraction = age / 29.53058867;
             const cycleDays = age % 29.53058867;
@@ -64,7 +78,14 @@
         }
 
         const nextPhases = [];
-        let searchDate = new Date(date);
+        let searchDate = new Date(Date.UTC(
+            date.getUTCFullYear(),
+            date.getUTCMonth(),
+            date.getUTCDate(),
+            date.getUTCHours(),
+            date.getUTCMinutes(),
+            date.getUTCSeconds()
+        ));
 
         const phaseTypes = [
             { name: 'Full Moon', illumination: 180 },
@@ -74,19 +95,24 @@
 
         for (let i = 0; i < 3; i++) {
             const nextPhase = phaseTypes[i % phaseTypes.length];
-            const searchResult = Astronomy.SearchMoonPhase(nextPhase.illumination, searchDate);
-            if (searchResult) {
-                nextPhases.push({
-                    name: nextPhase.name,
-                    date: searchResult.toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    })
-                });
-                searchDate = new Date(searchResult.getTime() + 24 * 60 * 60 * 1000);
-            } else {
+            try {
+                const searchResult = Astronomy.SearchMoonPhase(nextPhase.illumination, searchDate);
+                if (searchResult) {
+                    nextPhases.push({
+                        name: nextPhase.name,
+                        date: searchResult.toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })
+                    });
+                    searchDate = new Date(searchResult.getTime() + 24 * 60 * 60 * 1000);
+                } else {
+                    nextPhases.push({ name: nextPhase.name, date: 'N/A' });
+                }
+            } catch (error) {
+                console.error(`Error calculating ${nextPhase.name}:`, error);
                 nextPhases.push({ name: nextPhase.name, date: 'N/A' });
             }
         }
@@ -97,7 +123,7 @@
     function updateMoonPhase() {
         try {
             const dateInput = document.getElementById('date-input');
-            let selectedDate = dateInput.value ? new Date(dateInput.value + 'T12:00:00') : new Date();
+            let selectedDate = dateInput.value ? new Date(dateInput.value + 'T12:00:00Z') : new Date();
 
             const { phaseName, visualChar, cycleDays, age } = getMoonPhase(selectedDate);
 
