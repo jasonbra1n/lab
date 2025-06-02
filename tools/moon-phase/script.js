@@ -1,18 +1,7 @@
 (function () {
-    let astronomyLoaded = false;
-
-    function onAstroLoad() {
-        astronomyLoaded = true;
-        document.getElementById('loading-status').textContent = 'Astronomy Engine loaded successfully.';
-        updateMoonPhase();
-    }
-
-    function onAstroError() {
-        astronomyLoaded = false;
-        document.getElementById('loading-status').textContent = 'Failed to load Astronomy Engine.';
-        console.error('Failed to load Astronomy Engine from CDN');
-        updateMoonPhase();
-    }
+    // Get the astronomyLoaded state from the script tag
+    const scriptElement = document.querySelector('script[src="tools/moon-phase/script.js"]');
+    const astronomyLoaded = scriptElement.getAttribute('data-astronomy-loaded') === 'true';
 
     function getMoonPhase(date) {
         try {
@@ -149,17 +138,11 @@
         if (dateInput) {
             dateInput.value = ''; // Clear the date picker
         }
-        updateMoonPhase(); // Update with the current date
+        updateMoonPhase();
     }
 
-    // Initial setup with timeout to handle loading
-    setTimeout(() => {
-        if (!astronomyLoaded) {
-            onAstroError();
-        } else {
-            updateMoonPhase();
-        }
-    }, 2000);
+    // Initial setup
+    updateMoonPhase();
 
     // Refresh button
     const refreshBtn = document.getElementById('refresh-btn');
