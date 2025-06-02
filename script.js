@@ -150,20 +150,39 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Dynamically load Astronomy Engine for Moon Phase tool
             if (toolName === 'moon-phase' && !window.Astronomy) {
+                const loadingStatus = document.getElementById('loading-status');
+                if (loadingStatus) {
+                    loadingStatus.textContent = 'Loading Astronomy Engine...';
+                }
+                
                 const astroScript = document.createElement('script');
                 astroScript.src = 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js';
                 astroScript.id = 'astro-script';
-                astroScript.onload = () => {
-                    console.log('Astronomy Engine loaded successfully');
-                    loadToolScript(toolName);
-                };
-                astroScript.onerror = () => {
-                    console.error('Failed to load Astronomy Engine');
-                    loadToolScript(toolName); // Proceed with fallback
-                };
+                
+                const astroLoadPromise = new Promise((resolve, reject) => {
+                    astroScript.onload = () => {
+                        console.log('Astronomy Engine loaded successfully');
+                        if (loadingStatus) {
+                            loadingStatus.textContent = 'Astronomy Engine loaded successfully.';
+                        }
+                        resolve(true);
+                    };
+                    astroScript.onerror = () => {
+                        console.error('Failed to load Astronomy Engine');
+                        if (loadingStatus) {
+                            loadingStatus.textContent = 'Failed to load Astronomy Engine.';
+                        }
+                        reject(false);
+                    };
+                });
+                
                 toolContainer.appendChild(astroScript);
+                
+                // Wait for the script to load before proceeding
+                const astronomyLoaded = await astroLoadPromise;
+                loadToolScript(toolName, astronomyLoaded);
             } else {
-                loadToolScript(toolName);
+                loadToolScript(toolName, true);
             }
             
             console.log(`Loaded tool: ${toolName}`);
@@ -178,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    function loadToolScript(toolName) {
+    function loadToolScript(toolName, astronomyLoaded) {
         if (toolName === 'image-to-webp-converter') {
             if (!window.JSZip) {
                 const jszipScript = document.createElement('script');
@@ -209,13 +228,14 @@ document.addEventListener('DOMContentLoaded', function() {
             toneScript.onload = () => loadLocalScript(toolName);
             toolContainer.appendChild(toneScript);
         } else {
-            loadLocalScript(toolName);
+            loadLocalScript(toolName, astronomyLoaded);
         }
     }
     
-    function loadLocalScript(toolName) {
+    function loadLocalScript(toolName, astronomyLoaded) {
         const script = document.createElement('script');
         script.src = `tools/${toolName}/script.js`;
+        script.setAttribute('data-astronomy-loaded', astronomyLoaded ? 'true' : 'false');
         script.onload = () => console.log(`Script loaded for ${toolName}`);
         script.onerror = () => console.error(`Failed to load script for ${toolName}`);
         toolContainer.appendChild(script);
