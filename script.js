@@ -148,58 +148,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn(`No styles.css found for ${toolName}, relying on main styles`);
             }
             
-            if (toolName === 'image-to-webp-converter') {
-                if (!window.JSZip) {
-                    const jszipScript = document.createElement('script');
-                    jszipScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-                    toolContainer.appendChild(jszipScript);
-                    
-                    jszipScript.onload = () => {
-                        if (!window.saveAs) {
-                            const fileSaverScript = document.createElement('script');
-                            fileSaverScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
-                            fileSaverScript.onload = () => {
-                                const script = document.createElement('script');
-                                script.src = `tools/${toolName}/script.js`;
-                                toolContainer.appendChild(script);
-                            };
-                            toolContainer.appendChild(fileSaverScript);
-                        } else {
-                            const script = document.createElement('script');
-                            script.src = `tools/${toolName}/script.js`;
-                            toolContainer.appendChild(script);
-                        }
-                    };
-                } else if (!window.saveAs) {
-                    const fileSaverScript = document.createElement('script');
-                    fileSaverScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
-                    fileSaverScript.onload = () => {
-                        const script = document.createElement('script');
-                        script.src = `tools/${toolName}/script.js`;
-                        toolContainer.appendChild(script);
-                    };
-                    toolContainer.appendChild(fileSaverScript);
-                } else {
-                    const script = document.createElement('script');
-                    script.src = `tools/${toolName}/script.js`;
-                    toolContainer.appendChild(script);
-                }
-            } else if (toolName === 'binaural-beats' && !window.Tone) {
-                const toneScript = document.createElement('script');
-                toneScript.src = 'https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.js';
-                toneScript.onload = () => {
-                    const script = document.createElement('script');
-                    script.src = `tools/${toolName}/script.js`;
-                    toolContainer.appendChild(script);
+            // Dynamically load Astronomy Engine for Moon Phase tool
+            if (toolName === 'moon-phase' && !window.Astronomy) {
+                const astroScript = document.createElement('script');
+                astroScript.src = 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.bundle.js';
+                astroScript.id = 'astro-script';
+                astroScript.onload = () => {
+                    console.log('Astronomy Engine loaded successfully');
+                    loadToolScript(toolName);
                 };
-                toolContainer.appendChild(toneScript);
+                astroScript.onerror = () => {
+                    console.error('Failed to load Astronomy Engine');
+                    loadToolScript(toolName); // Proceed with fallback
+                };
+                toolContainer.appendChild(astroScript);
             } else {
-                const script = document.createElement('script');
-                script.src = `tools/${toolName}/script.js`;
-                script.onload = () => console.log(`Script loaded for ${toolName}`);
-                script.onerror = () => console.error(`Failed to load script for ${toolName}`);
-                toolContainer.appendChild(script);
+                loadToolScript(toolName);
             }
+            
             console.log(`Loaded tool: ${toolName}`);
         } catch (error) {
             toolContainer.innerHTML = `
@@ -210,6 +176,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         }
+    }
+    
+    function loadToolScript(toolName) {
+        if (toolName === 'image-to-webp-converter') {
+            if (!window.JSZip) {
+                const jszipScript = document.createElement('script');
+                jszipScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+                toolContainer.appendChild(jszipScript);
+                
+                jszipScript.onload = () => {
+                    if (!window.saveAs) {
+                        const fileSaverScript = document.createElement('script');
+                        fileSaverScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
+                        fileSaverScript.onload = () => loadLocalScript(toolName);
+                        toolContainer.appendChild(fileSaverScript);
+                    } else {
+                        loadLocalScript(toolName);
+                    }
+                };
+            } else if (!window.saveAs) {
+                const fileSaverScript = document.createElement('script');
+                fileSaverScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
+                fileSaverScript.onload = () => loadLocalScript(toolName);
+                toolContainer.appendChild(fileSaverScript);
+            } else {
+                loadLocalScript(toolName);
+            }
+        } else if (toolName === 'binaural-beats' && !window.Tone) {
+            const toneScript = document.createElement('script');
+            toneScript.src = 'https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.js';
+            toneScript.onload = () => loadLocalScript(toolName);
+            toolContainer.appendChild(toneScript);
+        } else {
+            loadLocalScript(toolName);
+        }
+    }
+    
+    function loadLocalScript(toolName) {
+        const script = document.createElement('script');
+        script.src = `tools/${toolName}/script.js`;
+        script.onload = () => console.log(`Script loaded for ${toolName}`);
+        script.onerror = () => console.error(`Failed to load script for ${toolName}`);
+        toolContainer.appendChild(script);
     }
     
     window.addEventListener('resize', function() {
