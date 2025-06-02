@@ -196,9 +196,11 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 const script = document.createElement('script');
                 script.src = `tools/${toolName}/script.js`;
+                script.onload = () => console.log(`Script loaded for ${toolName}`);
+                script.onerror = () => console.error(`Failed to load script for ${toolName}`);
                 toolContainer.appendChild(script);
             }
-            console.log(`Loaded tool: ${toolName}`); // Debug log
+            console.log(`Loaded tool: ${toolName}`);
         } catch (error) {
             toolContainer.innerHTML = `
                 <div class="error">
