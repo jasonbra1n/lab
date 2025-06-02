@@ -1,5 +1,20 @@
 (function () {
-    // Fallback approximate moon phase calculation if Astronomy Engine fails
+    let astronomyLoaded = false;
+
+    function onAstroLoad() {
+        astronomyLoaded = true;
+        document.getElementById('loading-status').textContent = 'Astronomy Engine loaded successfully.';
+        updateMoonPhase();
+    }
+
+    function onAstroError() {
+        astronomyLoaded = false;
+        document.getElementById('loading-status').textContent = 'Failed to load Astronomy Engine, using fallback method.';
+        console.error('Failed to load Astronomy Engine from CDN');
+        updateMoonPhase();
+    }
+
+    // Fallback approximate moon phase calculation
     function calculateMoonPhaseFallback(date) {
         try {
             const referenceNewMoon = new Date('2000-01-06T00:00:00Z');
@@ -49,18 +64,16 @@
 
     function getMoonPhase(date) {
         try {
-            if (typeof Astronomy === 'undefined') {
+            if (!astronomyLoaded) {
                 console.warn('Astronomy Engine not loaded, using fallback method');
                 return calculateMoonPhaseFallback(date);
             }
 
-            // Use Astronomy Engine to get the moon's illumination
             const illumination = Astronomy.Illumination(Astronomy.Body.Moon, date);
             const age = illumination.age; // Days since the last New Moon
             const phaseFraction = age / 29.53058867; // Normalize to lunar cycle
             const cycleDays = age % 29.53058867;
 
-            // Determine phase based on illumination fraction and age
             let phaseName, visualChar;
             if (phaseFraction < 0.25) {
                 phaseName = 'New Moon';
@@ -101,22 +114,33 @@
     }
 
     function calculateNextPhases(date) {
-        if (typeof Astronomy === 'undefined') {
-            console.warn('Astronomy Engine not loaded, upcoming phases unavailable');
-            return [{ name: 'Full Moon', date: 'N/A' }, { name: 'Last Quarter', date: 'N/A' }, { name: 'New Moon', date: 'N/A' }];
+        if (!astronomyLoaded) {
+            // Fallback approximate next phases
+            const lunarCycle = 29.53058867;
+            const currentDate = new Date(date);
+            const referenceNewMoon = new Date('2000-01-06T00:00:00Z');
+            const timeDiff = currentDate.getTime() - referenceNewMoon.getTime();
+            const daysSinceNewMoon = (timeDiff / (1000 * 60 * 60 * 24)) % lunarCycle;
+            const daysToFull = 16.5 - daysSinceNewMoon;
+            const daysToLast = 23.5 - daysSinceNewMoon;
+            const daysToNew = 29.53058867 - daysSinceNewMoon;
+
+            return [
+                { name: 'Full Moon', date: new Date(currentDate.getTime() + daysToFull * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) },
+                { name: 'Last Quarter', date: new Date(currentDate.getTime() + daysToLast * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) },
+                { name: 'New Moon', date: new Date(currentDate.getTime() + daysToNew * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }
+            ];
         }
 
         const nextPhases = [];
         let searchDate = new Date(date);
 
-        // Define the major phases we want to predict
         const phaseTypes = [
             { name: 'Full Moon', illumination: 180 }, // Full Moon at 180 degrees
             { name: 'Last Quarter', illumination: 270 }, // Last Quarter at 270 degrees
             { name: 'New Moon', illumination: 0 } // New Moon at 0 degrees
         ];
 
-        // Find the next three phases
         for (let i = 0; i < 3; i++) {
             const nextPhase = phaseTypes[i % phaseTypes.length];
             const searchResult = Astronomy.SearchMoonPhase(nextPhase.illumination, searchDate);
@@ -141,13 +165,11 @@
 
     function updateMoonPhase() {
         try {
-            // Use date picker value if set, otherwise default to current date
             const dateInput = document.getElementById('date-input');
             let selectedDate = dateInput.value ? new Date(dateInput.value + 'T12:00:00') : new Date();
 
             const { phaseName, visualChar, cycleDays, age } = getMoonPhase(selectedDate);
 
-            // Update the UI
             const phaseNameElement = document.getElementById('phase-name');
             const moonVisualElement = document.getElementById('moon-visual');
             const currentDateElement = document.getElementById('current-date');
@@ -166,7 +188,6 @@
                     hour12: true
                 });
 
-                // Calculate and display the next three phases
                 const nextPhases = calculateNextPhases(selectedDate);
                 phaseListElement.innerHTML = nextPhases.map(phase => 
                     `<div>${phase.name}: ${phase.date}</div>`
@@ -189,8 +210,14 @@
         updateMoonPhase(); // Update with the current date
     }
 
-    // Initial setup
-    updateMoonPhase();
+    // Initial setup with timeout to handle loading
+    setTimeout(() => {
+        if (!astronomyLoaded) {
+            onAstroError();
+        } else {
+            updateMoonPhase();
+        }
+    }, 2000); // Wait 2 seconds for CDN to load
 
     // Refresh button
     const refreshBtn = document.getElementById('refresh-btn');
