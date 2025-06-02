@@ -81,13 +81,14 @@
 
         // Calculate the next three phases
         for (let i = 0; i < 3; i++) {
-            // Find the next phase
+            // Move to the next phase index
             currentIndex = (currentIndex + 1) % 8;
             const nextPhase = phaseDurations[currentIndex === 0 ? 8 : currentIndex];
             const daysUntilNextPhase = nextPhase.threshold - remainingDays;
 
-            // Adjust for wrapping around the lunar cycle
-            const daysToAdd = daysUntilNextPhase <= 0 ? daysUntilNextPhase + lunarCycle : daysUntilNextPhase;
+            // If daysUntilNextPhase is negative, it means we’ve passed this threshold in the current cycle
+            // Add a full lunar cycle and adjust
+            const daysToAdd = daysUntilNextPhase <= 0 ? lunarCycle + (nextPhase.threshold - remainingDays) : daysUntilNextPhase;
             const nextPhaseDate = new Date(date.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
 
             nextPhases.push({
@@ -100,8 +101,8 @@
                 })
             });
 
-            // Update remaining days for the next iteration
-            remainingDays = (remainingDays + daysToAdd) % lunarCycle;
+            // Update remaining days for the next iteration (reset to 0 after a full cycle)
+            remainingDays = (remainingDays + daysToAdd) % lunarCycle || 0;
         }
 
         return nextPhases;
