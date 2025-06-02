@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Dynamically load Astronomy Engine for Moon Phase tool
             if (toolName === 'moon-phase' && !window.Astronomy) {
                 const astroScript = document.createElement('script');
-                astroScript.src = 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.bundle.js';
+                astroScript.src = 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js';
                 astroScript.id = 'astro-script';
                 astroScript.onload = () => {
                     console.log('Astronomy Engine loaded successfully');
