@@ -1,3 +1,16 @@
+<script>
+    console.log('Inline script executing at top of page');
+    // Test if DOM is accessible
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded - Inline script running');
+        const phaseName = document.getElementById('phase-name');
+        if (phaseName) phaseName.textContent = 'Inline Test Phase (Top)';
+        const currentDate = document.getElementById('current-date');
+        if (currentDate) currentDate.textContent = new Date().toISOString().split('T')[0];
+        const loadingStatus = document.getElementById('loading-status');
+        if (loadingStatus) loadingStatus.textContent = 'Loaded (Inline Test Top)';
+    });
+</script>
 <div class="container">
     <h2>Moon Phase</h2>
     <div class="moon-phase">
@@ -19,10 +32,4 @@
     <div id="loading-status" style="text-align: center; color: var(--text-color); margin-top: 10px;">Loading...</div>
 </div>
 <script src="astronomy.browser.js"></script>
-<script>
-    console.log('Inline script executing');
-    document.getElementById('phase-name').textContent = 'Inline Test Phase';
-    document.getElementById('current-date').textContent = new Date().toISOString().split('T')[0];
-    document.getElementById('loading-status').textContent = 'Loaded (Inline Test)';
-</script>
 <script src="script.js"></script>
