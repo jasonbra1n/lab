@@ -1,4 +1,3 @@
-// Theme Management
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -60,7 +59,6 @@ function addThemeToggle() {
     updateThemeIcon();
 }
 
-// Tool Loading System
 document.addEventListener('DOMContentLoaded', function() {
     initializeTheme();
     addThemeToggle();
@@ -69,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const pillarButtons = document.querySelectorAll('.pillar-btn');
     const toolContainer = document.getElementById('tool-container');
     
-    // Tool button clicks
     toolButtons.forEach(button => {
         button.addEventListener('click', function() {
             toolButtons.forEach(btn => btn.classList.remove('active'));
@@ -83,13 +80,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 page_title: toolName.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
                 page_path: `/tools/${toolName}`
             });
-            // Dispatch toolChange event
             const event = new CustomEvent('toolChange', { detail: { tool: toolName } });
             document.dispatchEvent(event);
         });
     });
     
-    // Pillar button clicks for touch devices
     pillarButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
@@ -148,46 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn(`No styles.css found for ${toolName}, relying on main styles`);
             }
             
-
-
-// Dynamically load Astronomy Engine for Moon Phase tool
-if (toolName === 'moon-phase' && !window.Astronomy) {
-    const loadingStatus = document.getElementById('loading-status');
-    if (loadingStatus) {
-        loadingStatus.textContent = 'Loading Astronomy Engine...';
-    }
-
-    const astroScript = document.createElement('script');
-    astroScript.src = 'tools/moon-phase/astronomy.browser.js'; // Use local file
-    astroScript.id = 'astro-script';
-
-    const astroLoadPromise = new Promise((resolve, reject) => {
-        astroScript.onload = () => {
-            console.log('Astronomy Engine loaded successfully');
-            if (loadingStatus) {
-                loadingStatus.textContent = 'Astronomy Engine loaded successfully.';
-            }
-            resolve(true);
-        };
-        astroScript.onerror = () => {
-            console.error('Failed to load Astronomy Engine');
-            if (loadingStatus) {
-                loadingStatus.textContent = 'Failed to load Astronomy Engine.';
-            }
-            reject(false);
-        };
-    });
-
-    toolContainer.appendChild(astroScript);
-
-    // Wait for the script to load before proceeding
-    const astronomyLoaded = await astroLoadPromise;
-    loadToolScript(toolName, astronomyLoaded);
-} else {
-    loadToolScript(toolName, true);
-}
-
-
+            loadToolScript(toolName);
             
             console.log(`Loaded tool: ${toolName}`);
         } catch (error) {
@@ -201,7 +157,7 @@ if (toolName === 'moon-phase' && !window.Astronomy) {
         }
     }
     
-    function loadToolScript(toolName, astronomyLoaded) {
+    function loadToolScript(toolName) {
         if (toolName === 'image-to-webp-converter') {
             if (!window.JSZip) {
                 const jszipScript = document.createElement('script');
@@ -232,14 +188,13 @@ if (toolName === 'moon-phase' && !window.Astronomy) {
             toneScript.onload = () => loadLocalScript(toolName);
             toolContainer.appendChild(toneScript);
         } else {
-            loadLocalScript(toolName, astronomyLoaded);
+            loadLocalScript(toolName);
         }
     }
     
-    function loadLocalScript(toolName, astronomyLoaded) {
+    function loadLocalScript(toolName) {
         const script = document.createElement('script');
         script.src = `tools/${toolName}/script.js`;
-        script.setAttribute('data-astronomy-loaded', astronomyLoaded ? 'true' : 'false');
         script.onload = () => console.log(`Script loaded for ${toolName}`);
         script.onerror = () => console.error(`Failed to load script for ${toolName}`);
         toolContainer.appendChild(script);
