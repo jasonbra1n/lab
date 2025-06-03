@@ -26,6 +26,7 @@ async function updateMoonPhase() {
         document.getElementById('next-full-moon').textContent = nextPhases.fullMoon.toISOString().split('T')[0];
         document.getElementById('next-last-quarter').textContent = nextPhases.lastQuarter.toISOString().split('T')[0];
         document.getElementById('next-new-moon').textContent = nextPhases.newMoon.toISOString().split('T')[0];
+        document.getElementById('loading-status').textContent = '';
     } else {
         console.error('Invalid illumination data returned from Astronomy Engine');
         // Fallback calculation
@@ -40,6 +41,7 @@ async function updateMoonPhase() {
         document.getElementById('next-full-moon').textContent = fallbackNext.fullMoon.toISOString().split('T')[0];
         document.getElementById('next-last-quarter').textContent = fallbackNext.lastQuarter.toISOString().split('T')[0];
         document.getElementById('next-new-moon').textContent = fallbackNext.newMoon.toISOString().split('T')[0];
+        document.getElementById('loading-status').textContent = 'Using fallback data.';
         console.log(`Fallback - Calculated phase: ${fallbackPhase.name}, Days in cycle: ${fallbackAge.toFixed(2)}`);
     }
 }
