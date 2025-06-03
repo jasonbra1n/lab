@@ -112,3 +112,16 @@
         font-size: 0.9em;
     }
 }
+.moon-visual {
+    font-size: 40px;
+    text-align: center;
+}
+
+.moon-new { content: "🌑"; }
+.moon-waxing-crescent { content: "🌒"; }
+.moon-first-quarter { content: "🌓"; }
+.moon-waxing-gibbous { content: "🌔"; }
+.moon-full { content: "🌕"; }
+.moon-waning-gibbous { content: "🌖"; }
+.moon-last-quarter { content: "🌗"; }
+.moon-waning-crescent { content: "🌘"; }
