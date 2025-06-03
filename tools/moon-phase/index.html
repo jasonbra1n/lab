@@ -1,43 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moon Phase Tool</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Adjust path to your global styles if needed -->
-    <style>
-        .moon-phase-container {
-            text-align: center;
-            padding: 20px;
-        }
-        .moon-icon {
-            font-size: 40px;
-        }
-        .moon-new { content: "🌑"; }
-        .moon-waxing-crescent { content: "🌒"; }
-        .moon-first-quarter { content: "🌓"; }
-        .moon-waxing-gibbous { content: "🌔"; }
-        .moon-full { content: "🌕"; }
-        .moon-waning-gibbous { content: "🌖"; }
-        .moon-last-quarter { content: "🌗"; }
-        .moon-waning-crescent { content: "🌘"; }
-    </style>
-</head>
-<body>
-    <div class="moon-phase-container">
-        <h2>Moon Phase</h2>
-        <div id="moon-icon" class="moon-icon"></div>
-        <p>Phase: <span id="moon-phase">Loading...</span></p>
-        <p>Days in Cycle: <span id="days-in-cycle">0.00</span></p>
-        <h3>Next Phases</h3>
-        <p>Full Moon: <span id="next-full-moon">Loading...</span></p>
-        <p>Last Quarter: <span id="next-last-quarter">Loading...</span></p>
-        <p>New Moon: <span id="next-new-moon">Loading...</span></p>
-        <p id="loading-status">Loading...</p>
+<div class="container">
+    <h2>Moon Phase</h2>
+    <div class="moon-phase">
+        <div class="moon-visual" id="moon-visual"></div>
+        <div class="moon-info">
+            <div class="phase-name" id="phase-name">Loading...</div>
+            <div class="phase-date">Date: <span id="current-date">Loading...</span></div>
+        </div>
+        <div class="date-picker">
+            <label for="date-input">Select Date: </label>
+            <input type="date" id="date-input">
+        </div>
+        <button class="console-btn" id="refresh-btn">Refresh</button>
+        <div class="next-phases" id="next-phases">
+            <h3>Upcoming Moon Phases</h3>
+            <div class="phase-list" id="phase-list">Loading upcoming phases...</div>
+        </div>
     </div>
-
-    <!-- Include the local Astronomy Engine library -->
-    <script src="astronomy.browser.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+    <div id="loading-status" style="text-align: center; color: var(--text-color); margin-top: 10px;">Loading...</div>
+</div>
+<script src="astronomy.browser.js"></script>
+<script src="script.js"></script>
