@@ -1,14 +1,13 @@
 <script>
     console.log('Inline script executing at top of page');
-    // Test if DOM is accessible
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM loaded - Inline script running');
         const phaseName = document.getElementById('phase-name');
-        if (phaseName) phaseName.textContent = 'Inline Test Phase (Top)';
+        if (phaseName) phaseName.textContent = 'Inline Test Phase (Main)';
         const currentDate = document.getElementById('current-date');
         if (currentDate) currentDate.textContent = new Date().toISOString().split('T')[0];
         const loadingStatus = document.getElementById('loading-status');
-        if (loadingStatus) loadingStatus.textContent = 'Loaded (Inline Test Top)';
+        if (loadingStatus) loadingStatus.textContent = 'Loaded (Inline Test Main)';
     });
 </script>
 <div class="container">
