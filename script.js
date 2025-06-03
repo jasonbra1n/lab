@@ -148,42 +148,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn(`No styles.css found for ${toolName}, relying on main styles`);
             }
             
-            // Dynamically load Astronomy Engine for Moon Phase tool
-            if (toolName === 'moon-phase' && !window.Astronomy) {
-                const loadingStatus = document.getElementById('loading-status');
-                if (loadingStatus) {
-                    loadingStatus.textContent = 'Loading Astronomy Engine...';
-                }
-                
-                const astroScript = document.createElement('script');
-                astroScript.src = 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js';
-                astroScript.id = 'astro-script';
-                
-                const astroLoadPromise = new Promise((resolve, reject) => {
-                    astroScript.onload = () => {
-                        console.log('Astronomy Engine loaded successfully');
-                        if (loadingStatus) {
-                            loadingStatus.textContent = 'Astronomy Engine loaded successfully.';
-                        }
-                        resolve(true);
-                    };
-                    astroScript.onerror = () => {
-                        console.error('Failed to load Astronomy Engine');
-                        if (loadingStatus) {
-                            loadingStatus.textContent = 'Failed to load Astronomy Engine.';
-                        }
-                        reject(false);
-                    };
-                });
-                
-                toolContainer.appendChild(astroScript);
-                
-                // Wait for the script to load before proceeding
-                const astronomyLoaded = await astroLoadPromise;
-                loadToolScript(toolName, astronomyLoaded);
-            } else {
-                loadToolScript(toolName, true);
+
+
+// Dynamically load Astronomy Engine for Moon Phase tool
+if (toolName === 'moon-phase' && !window.Astronomy) {
+    const loadingStatus = document.getElementById('loading-status');
+    if (loadingStatus) {
+        loadingStatus.textContent = 'Loading Astronomy Engine...';
+    }
+
+    const astroScript = document.createElement('script');
+    astroScript.src = 'tools/moon-phase/astronomy.browser.js'; // Use local file
+    astroScript.id = 'astro-script';
+
+    const astroLoadPromise = new Promise((resolve, reject) => {
+        astroScript.onload = () => {
+            console.log('Astronomy Engine loaded successfully');
+            if (loadingStatus) {
+                loadingStatus.textContent = 'Astronomy Engine loaded successfully.';
             }
+            resolve(true);
+        };
+        astroScript.onerror = () => {
+            console.error('Failed to load Astronomy Engine');
+            if (loadingStatus) {
+                loadingStatus.textContent = 'Failed to load Astronomy Engine.';
+            }
+            reject(false);
+        };
+    });
+
+    toolContainer.appendChild(astroScript);
+
+    // Wait for the script to load before proceeding
+    const astronomyLoaded = await astroLoadPromise;
+    loadToolScript(toolName, astronomyLoaded);
+} else {
+    loadToolScript(toolName, true);
+}
+
+
             
             console.log(`Loaded tool: ${toolName}`);
         } catch (error) {
