@@ -1,14 +1,41 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Moon Phase script initialized');
     updateMoonPhase();
     setInterval(updateMoonPhase, 60000); // Update every minute
+
+    // Add event listener for date picker
+    const dateInput = document.getElementById('date-input');
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            updateMoonPhase(new Date(this.value));
+        });
+    }
+
+    // Add event listener for refresh button
+    const refreshBtn = document.getElementById('refresh-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+            updateMoonPhase();
+        });
+    }
 });
 
-async function updateMoonPhase() {
-    const date = new Date();
-    console.log(`Calling Astronomy.Illumination with date: ${date}`);
+async function updateMoonPhase(selectedDate = new Date()) {
+    console.log('Starting updateMoonPhase');
+    console.log(`Selected date: ${selectedDate}`);
+
+    // Update the current date
+    const currentDateElement = document.getElementById('current-date');
+    if (currentDateElement) {
+        currentDateElement.textContent = selectedDate.toISOString().split('T')[0];
+    } else {
+        console.error('Current date element not found');
+    }
+
+    console.log(`Calling Astronomy.Illumination with date: ${selectedDate}`);
     let illum;
     try {
-        illum = Astronomy.Illumination(Body.Moon, date);
+        illum = Astronomy.Illumination(Body.Moon, selectedDate);
     } catch (e) {
         console.error(`Error in Astronomy.Illumination: ${e.message}`);
         illum = null;
@@ -17,31 +44,82 @@ async function updateMoonPhase() {
     if (illum && typeof illum.age === 'number' && Number.isFinite(illum.age)) {
         console.log(`Illumination result: age = ${illum.age} days`);
         const phase = getMoonPhase(illum.age);
-        document.getElementById('moon-phase').textContent = phase.name;
-        document.getElementById('moon-icon').className = `moon-${phase.icon}`;
-        document.getElementById('days-in-cycle').textContent = illum.age.toFixed(2);
+
+        const phaseNameElement = document.getElementById('phase-name');
+        if (phaseNameElement) {
+            phaseNameElement.textContent = phase.name;
+        } else {
+            console.error('Phase name element not found');
+        }
+
+        const moonVisualElement = document.getElementById('moon-visual');
+        if (moonVisualElement) {
+            moonVisualElement.className = `moon-visual moon-${phase.icon}`;
+        } else {
+            console.error('Moon visual element not found');
+        }
 
         // Calculate next phases
-        const nextPhases = calculateNextPhases(date, illum.age);
-        document.getElementById('next-full-moon').textContent = nextPhases.fullMoon.toISOString().split('T')[0];
-        document.getElementById('next-last-quarter').textContent = nextPhases.lastQuarter.toISOString().split('T')[0];
-        document.getElementById('next-new-moon').textContent = nextPhases.newMoon.toISOString().split('T')[0];
-        document.getElementById('loading-status').textContent = '';
+        const nextPhases = calculateNextPhases(selectedDate, illum.age);
+
+        const phaseListElement = document.getElementById('phase-list');
+        if (phaseListElement) {
+            phaseListElement.innerHTML = `
+                <p>Full Moon: ${nextPhases.fullMoon.toISOString().split('T')[0]}</p>
+                <p>Last Quarter: ${nextPhases.lastQuarter.toISOString().split('T')[0]}</p>
+                <p>New Moon: ${nextPhases.newMoon.toISOString().split('T')[0]}</p>
+            `;
+        } else {
+            console.error('Phase list element not found');
+        }
+
+        const loadingStatusElement = document.getElementById('loading-status');
+        if (loadingStatusElement) {
+            loadingStatusElement.textContent = '';
+        } else {
+            console.error('Loading status element not found');
+        }
     } else {
         console.error('Invalid illumination data returned from Astronomy Engine');
         // Fallback calculation
-        const fallbackAge = approximateMoonAge(date);
+        const fallbackAge = approximateMoonAge(selectedDate);
         const fallbackPhase = getMoonPhase(fallbackAge);
-        document.getElementById('moon-phase').textContent = fallbackPhase.name;
-        document.getElementById('moon-icon').className = `moon-${fallbackPhase.icon}`;
-        document.getElementById('days-in-cycle').textContent = fallbackAge.toFixed(2);
+
+        const phaseNameElement = document.getElementById('phase-name');
+        if (phaseNameElement) {
+            phaseNameElement.textContent = fallbackPhase.name;
+        } else {
+            console.error('Phase name element not found');
+        }
+
+        const moonVisualElement = document.getElementById('moon-visual');
+        if (moonVisualElement) {
+            moonVisualElement.className = `moon-visual moon-${fallbackPhase.icon}`;
+        } else {
+            console.error('Moon visual element not found');
+        }
 
         // Fallback next phases
-        const fallbackNext = calculateNextPhasesFallback(date, fallbackAge);
-        document.getElementById('next-full-moon').textContent = fallbackNext.fullMoon.toISOString().split('T')[0];
-        document.getElementById('next-last-quarter').textContent = fallbackNext.lastQuarter.toISOString().split('T')[0];
-        document.getElementById('next-new-moon').textContent = fallbackNext.newMoon.toISOString().split('T')[0];
-        document.getElementById('loading-status').textContent = 'Using fallback data.';
+        const fallbackNext = calculateNextPhasesFallback(selectedDate, fallbackAge);
+
+        const phaseListElement = document.getElementById('phase-list');
+        if (phaseListElement) {
+            phaseListElement.innerHTML = `
+                <p>Full Moon: ${fallbackNext.fullMoon.toISOString().split('T')[0]}</p>
+                <p>Last Quarter: ${fallbackNext.lastQuarter.toISOString().split('T')[0]}</p>
+                <p>New Moon: ${fallbackNext.newMoon.toISOString().split('T')[0]}</p>
+            `;
+        } else {
+            console.error('Phase list element not found');
+        }
+
+        const loadingStatusElement = document.getElementById('loading-status');
+        if (loadingStatusElement) {
+            loadingStatusElement.textContent = 'Using fallback data.';
+        } else {
+            console.error('Loading status element not found');
+        }
+
         console.log(`Fallback - Calculated phase: ${fallbackPhase.name}, Days in cycle: ${fallbackAge.toFixed(2)}`);
     }
 }
