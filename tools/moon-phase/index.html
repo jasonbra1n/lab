@@ -18,5 +18,11 @@
     </div>
     <div id="loading-status" style="text-align: center; color: var(--text-color); margin-top: 10px;">Loading...</div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/browser/astronomy.browser.min.js"></script>
+<script src="astronomy.browser.js"></script>
+<script>
+    console.log('Inline script executing');
+    document.getElementById('phase-name').textContent = 'Inline Test Phase';
+    document.getElementById('current-date').textContent = new Date().toISOString().split('T')[0];
+    document.getElementById('loading-status').textContent = 'Loaded (Inline Test)';
+</script>
 <script src="script.js"></script>
