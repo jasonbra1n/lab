@@ -95,6 +95,24 @@ function endGame(msg) {
 }
 
 /* ---------- listeners ---------- */
-startBtn.onclick = startGame;
-restart.onclick  = () => { modal.hidden = true; startGame(); };
-dot.onclick      = () => { if (playing) hit(); };
+startBtn.onclick = () => {
+  startBtn.hidden = true;
+  resetGame();
+};
+
+restart.onclick = () => {
+  modal.hidden = true;
+  resetGame();
+};
+
+dot.onclick = () => {
+  if (playing) hit();
+};
+
+/* ---------- reset helper ---------- */
+function resetGame() {
+  dotsHit = 0;
+  scoreEl.textContent = 0;
+  playing = true;
+  nextDot();
+}
