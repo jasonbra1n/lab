@@ -1,207 +1,53 @@
-import { useState, useEffect } from 'react'
-import { Card, CardContent } from "/components/ui/card"
-import { Button } from "/components/ui/button"
-import { Trophy, RotateCcw, Sparkles } from 'lucide-react'
-
-interface CardType {
-  id: number
-  emoji: string
-  isFlipped: boolean
-  isMatched: boolean
-}
-
-const emojis = ['🎮', '🎯', '🎨', '🎪', '🎭', '🎰', '🎲', '🎸']
-
-export default function MemoryGame() {
-  const [cards, setCards] = useState<CardType[]>([])
-  const [flippedCards, setFlippedCards] = useState<number[]>([])
-  const [moves, setMoves] = useState(0)
-  const [matches, setMatches] = useState(0)
-  const [gameStarted, setGameStarted] = useState(false)
-  const [gameCompleted, setGameCompleted] = useState(false)
-  const [startTime, setStartTime] = useState<number | null>(null)
-  const [elapsedTime, setElapsedTime] = useState(0)
-
-  useEffect(() => {
-    initializeGame()
-  }, [])
-
-  useEffect(() => {
-    if (gameStarted && startTime) {
-      const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000))
-      }, 1000)
-      return () => clearInterval(interval)
-    }
-  }, [gameStarted, startTime])
-
-  useEffect(() => {
-    if (matches === emojis.length && gameStarted) {
-      setGameCompleted(true)
-    }
-  }, [matches, gameStarted])
-
-  const initializeGame = () => {
-    const shuffledCards = [...emojis, ...emojis]
-      .sort(() => Math.random() - 0.5)
-      .map((emoji, index) => ({
-        id: index,
-        emoji,
-        isFlipped: false,
-        isMatched: false
-      }))
-    
-    setCards(shuffledCards)
-    setFlippedCards([])
-    setMoves(0)
-    setMatches(0)
-    setGameStarted(false)
-    setGameCompleted(false)
-    setStartTime(null)
-    setElapsedTime(0)
-  }
-
-  const handleCardClick = (id: number) => {
-    if (!gameStarted) {
-      setGameStarted(true)
-      setStartTime(Date.now())
-    }
-
-    const card = cards.find(c => c.id === id)
-    if (!card || card.isFlipped || card.isMatched || flippedCards.length === 2) {
-      return
-    }
-
-    const newFlippedCards = [...flippedCards, id]
-    setFlippedCards(newFlippedCards)
-    
-    setCards(prev => prev.map(c => 
-      c.id === id ? { ...c, isFlipped: true } : c
-    ))
-
-    if (newFlippedCards.length === 2) {
-      setMoves(prev => prev + 1)
-      const [firstId, secondId] = newFlippedCards
-      const firstCard = cards.find(c => c.id === firstId)
-      const secondCard = cards.find(c => c.id === secondId)
-
-      if (firstCard && secondCard && firstCard.emoji === secondCard.emoji) {
-        setTimeout(() => {
-          setCards(prev => prev.map(c => 
-            c.id === firstId || c.id === secondId 
-              ? { ...c, isMatched: true } 
-              : c
-          ))
-          setMatches(prev => prev + 1)
-          setFlippedCards([])
-        }, 600)
-      } else {
-        setTimeout(() => {
-          setCards(prev => prev.map(c => 
-            c.id === firstId || c.id === secondId 
-              ? { ...c, isFlipped: false } 
-              : c
-          ))
-          setFlippedCards([])
-        }, 1000)
-      }
-    }
-  }
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-            <Sparkles className="w-8 h-8 text-purple-500" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Master Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">
+            <span class="sparkle">✨</span>
             Memory Master
-            <Sparkles className="w-8 h-8 text-purple-500" />
-          </h1>
-          <p className="text-gray-600">Match all the pairs to win!</p>
+            <span class="sparkle">✨</span>
+        </h1>
+        <p class="game-subtitle">Match all the pairs to win!</p>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="moves">0</div>
+                <div class="stat-label">Moves</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="matches">0/8</div>
+                <div class="stat-label">Matches</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="time">0:00</div>
+                <div class="stat-label">Time</div>
+            </div>
         </div>
 
-        <div className="flex justify-center gap-8 mb-6">
-          <Card className="px-4 py-2">
-            <CardContent className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{moves}</div>
-              <div className="text-sm text-gray-600">Moves</div>
-            </CardContent>
-          </Card>
-          <Card className="px-4 py-2">
-            <CardContent className="text-center">
-              <div className="text-2xl font-bold text-pink-600">{matches}/{emojis.length}</div>
-              <div className="text-sm text-gray-600">Matches</div>
-            </CardContent>
-          </Card>
-          <Card className="px-4 py-2">
-            <CardContent className="text-center">
-              <div className="text-2xl font-bold text-indigo-600">{formatTime(elapsedTime)}</div>
-              <div className="text-sm text-gray-600">Time</div>
-            </CardContent>
-          </Card>
-        </div>
+        <div class="game-board" id="gameBoard"></div>
 
-        <div className="grid grid-cols-4 gap-3 max-w-2xl mx-auto mb-6">
-          {cards.map((card) => (
-            <Card
-              key={card.id}
-              className={`aspect-square cursor-pointer transition-all duration-300 transform hover:scale-105 ${
-                card.isFlipped || card.isMatched
-                  ? 'bg-gradient-to-br from-purple-400 to-pink-400 rotate-0'
-                  : 'bg-gradient-to-br from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400'
-              } ${card.isMatched ? 'opacity-60 scale-95' : ''}`}
-              onClick={() => handleCardClick(card.id)}
-            >
-              <CardContent className="flex items-center justify-center h-full">
-                <div className={`text-4xl transition-all duration-300 ${
-                  card.isFlipped || card.isMatched ? 'opacity-100' : 'opacity-0'
-                }`}>
-                  {card.emoji}
-                </div>
-                {!card.isFlipped && !card.isMatched && (
-                  <div className="absolute text-gray-600 text-2xl">?</div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <button class="restart-btn" onclick="initializeGame()">
+            🔄 New Game
+        </button>
 
-        <div className="text-center">
-          <Button
-            onClick={initializeGame}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            New Game
-          </Button>
+        <div class="win-modal" id="winModal">
+            <div class="win-content">
+                <div class="trophy">🏆</div>
+                <h2>Congratulations!</h2>
+                <p id="winMessage"></p>
+                <button class="play-again-btn" onclick="initializeGame()">
+                    Play Again
+                </button>
+            </div>
         </div>
-
-        {gameCompleted && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <Card className="max-w-md mx-4">
-              <CardContent className="text-center p-8">
-                <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">Congratulations!</h2>
-                <p className="text-gray-600 mb-4">
-                  You completed the game in {moves} moves and {formatTime(elapsedTime)}!
-                </p>
-                <Button
-                  onClick={initializeGame}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-                >
-                  Play Again
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </div>
     </div>
-  )
-}
+
+    <script src="script.js"></script>
+</body>
+</html>
