@@ -1,118 +1,129 @@
-/* ---------- helpers ---------- */
-const $ = id => document.getElementById(id);
+css
 
-const dot      = $('dot');
-const startBtn = $('start');
-const modal    = $('modal');
-const result   = $('result');
-const restart  = $('restart');
-const scoreEl  = $('score');
-const bestEl   = $('best');
-const fx       = $('fx');
-const ctx      = fx.getContext('2d');
-fx.width = 300;
-fx.height = 400;
+/*  Dark theme & layout  */
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #111;
+  color: #0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+h1 { margin: 0 0 20px; }
 
-let playing   = false;
-let dotsHit   = 0;
+/*  Buttons  */
+button {
+  padding: 10px 20px;
+  font-size: 18px;
+  border: 2px solid #0f0;
+  background: transparent;
+  color: #0f0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover { background: #0f033; }
+
+/*  Game area  */
+#gameArea {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  border: 1px solid #222;
+  border-radius: 10px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+/*  Dots  */
+.dot {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: #0f0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/*  Modal  */
+#modal {
+  position: fixed;
+  inset: 0;
+  background: #111d;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#modal h2 { margin-bottom: 20px; }
+game.js
+
+js
+
+const startBtn = document.getElementById('start');
+const gameArea = document.getElementById('gameArea');
+const modal = document.getElementById('modal');
+const bestSpan = document.getElementById('best');
+const againBtn = document.getElementById('again');
+const fx = document.getElementById('fx');
+const ctx = fx.getContext('2d');
+
+let best = +localStorage.getItem('best') || 0;
+bestSpan.textContent = best;
+
+let clicks = 0;
+let activeDot = null;
 let startTime = 0;
-let best      = +localStorage.getItem('best') || 0;
-if (best) bestEl.textContent = best;
+let particles = [];
 
-/* ---------- particle explosion ---------- */
-const particles = [];
-function addParticles(x, y) {
+startBtn.addEventListener('click', nextDot);
+againBtn.addEventListener('click', reset);
+
+function nextDot() {
+  if (clicks >= 5) return showModal();
+  if (activeDot) activeDot.remove();
+
+  const dot = document.createElement('div');
+  dot.className = 'dot';
+  const x = Math.random() * 250;
+  const y = Math.random() * 350;
+  dot.style.left = x + 'px';
+  dot.style.top = y + 'px';
+  gameArea.appendChild(dot);
+  activeDot = dot;
+  startTime = performance.now();
+
+  dot.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const ms = Math.round(performance.now() - startTime);
+    if (!best || ms < best) {
+      best = ms;
+      localStorage.setItem('best', best);
+      bestSpan.textContent = best;
+    }
+    explode(e.clientX - gameArea.offsetLeft, e.clientY - gameArea.offsetTop);
+    dot.remove();
+    activeDot = null;
+    clicks++;
+    nextDot();
+  });
+}
+
+function explode(x, y) {
   for (let i = 0; i < 30; i++) {
     particles.push({
-      x, y,
-      dx: (Math.random() - .5) * 6,
-      dy: (Math.random() - .5) * 6,
+      x,
+      y,
+      vx: (Math.random() - 0.5) * 4,
+      vy: (Math.random() - 0.5) * 4,
       life: 20
     });
   }
-}
-function animateParticles() {
-  ctx.clearRect(0, 0, 300, 400);
-  particles.forEach(p => {
-    p.x += p.dx;
-    p.y += p.dy;
-    p.life--;
-    ctx.fillStyle = `rgba(0,255,0,${p.life/20})`;
-    ctx.fillRect(p.x, p.y, 3, 3);
-  });
-  particles.splice(0, particles.length, ...particles.filter(p => p.life > 0));
-  if (particles.length) requestAnimationFrame(animateParticles);
-}
-
-/* ---------- game logic ---------- */
-function nextDot() {
-  const maxX = 300 - 50;
-  const maxY = 400 - 50;
-  dot.style.left = Math.floor(Math.random() * maxX) + 'px';
-  dot.style.top  = Math.floor(Math.random() * maxY) + 'px';
-  dot.hidden = false;
-  startTime  = Date.now();
-}
-
-function startGame() {
-  startBtn.hidden = true;
-  dotsHit = 0;
-  scoreEl.textContent = 0;
-  playing = true;
-  nextDot();
-}
-
-function hit() {
-  const t = Date.now() - startTime;
-  if (!best || t < best) {
-    best = t;
-    localStorage.setItem('best', best);
-    bestEl.textContent = best;
-  }
-  dotsHit++;
-  scoreEl.textContent = dotsHit;
-
-  /* particles */
-  const r = dot.getBoundingClientRect();
-  const x = parseInt(dot.style.left, 10) + 25;
-  const y = parseInt(dot.style.top, 10)  + 25;
-  addParticles(x, y);
-  animateParticles();
-
-  dot.hidden = true;
-
-  if (dotsHit >= 5) {
-    endGame(`Average: ${best} ms`);
-  } else {
-    setTimeout(nextDot, 600 + Math.random() * 800);
-  }
-}
-
-function endGame(msg) {
-  playing = false;
-  result.textContent = msg;
-  modal.hidden = false;
-}
-
-/* ---------- listeners ---------- */
-startBtn.onclick = () => {
-  startBtn.hidden = true;
-  resetGame();
-};
-
-restart.onclick = () => {
-  modal.hidden = true;
-  resetGame();
-};
-
-dot.onclick = () => {
-  if (playing) hit();
-};
-
-/* ---------- reset helper ---------- */
-function resetGame() {
-  dotsHit = 0;
-  scoreEl.textContent = 0;
-  playing = true;
-  nextDot();
-}
+  animate();
