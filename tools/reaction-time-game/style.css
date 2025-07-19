@@ -1,88 +1,63 @@
-:root {
-  --bg: #111;
-  --fg: #eee;
-  --accent: #0f0;
-  --panel: #222;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, Arial, sans-serif; }
-
+/*  Dark theme & layout  */
 body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #111;
+  color: #0f0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  height: 100vh;
-  background: var(--bg);
-  color: var(--fg);
-  padding-top: 2rem;
+  padding-top: 20px;
 }
+h1 { margin: 0 0 20px; }
 
-h1 { margin-bottom: .5rem; font-size: 1.7rem; }
-#scoreboard { font-size: 1.1rem; margin-bottom: 1.2rem; }
+/*  Buttons  */
+button {
+  padding: 10px 20px;
+  font-size: 18px;
+  border: 2px solid #0f0;
+  background: transparent;
+  color: #0f0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover { background: #0f033; }
 
-#game {
+/*  Game area  */
+#gameArea {
   position: relative;
   width: 300px;
   height: 400px;
-  background: var(--panel);
-  border: 2px solid #444;
-  border-radius: 8px;
+  border: 1px solid #222;
+  border-radius: 10px;
+  margin-top: 20px;
   overflow: hidden;
 }
-
-#start,
-#dot {
+canvas {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 100px;
-  height: 50px;
-  border: none;
-  border-radius: 6px;
-  background: var(--accent);
-  color: #000;
-  font-weight: bold;
-  font-size: 1.1rem;
-  cursor: pointer;
-}
-#dot {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  left: 0;
   top: 0;
-  transform: none;
-}
-
-#fx {
-  position: absolute;
-  inset: 0;
+  left: 0;
   pointer-events: none;
 }
 
+/*  Dots  */
+.dot {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: #0f0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/*  Modal  */
 #modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.6);
+  background: #111d;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
-#box {
-  background: var(--panel);
-  padding: 2rem 3rem;
-  border-radius: 8px;
-  text-align: center;
-}
-#box button {
-  margin-top: 1rem;
-  padding: .5rem 1rem;
-  border: none;
-  background: var(--accent);
-  color: #000;
-  font-weight: bold;
-  border-radius: 4px;
-  cursor: pointer;
-}
+#modal h2 { margin-bottom: 20px; }
