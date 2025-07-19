@@ -1,29 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Reaction-Time Game</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reaction Mini-Game</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Click the Green Dot!</h1>
+  <h1>Reaction Mini-Game</h1>
+  <button id="start">Start</button>
 
-  <div id="scoreboard">
-    <span id="score">0</span> / 5 dots  |  Best: <span id="best">—</span> ms
-  </div>
-
-  <div id="game">
-    <button id="start">Start</button>
-    <button id="dot" hidden></button>
-    <canvas id="fx"></canvas>
+  <div id="gameArea">
+    <canvas id="fx" width="300" height="400"></canvas>
   </div>
 
   <div id="modal" hidden>
-    <div id="box">
-      <h2 id="result"></h2>
-      <button id="restart">Play Again</button>
-    </div>
+    <h2>Best Reaction: <span id="best">0</span> ms</h2>
+    <button id="again">Play Again</button>
   </div>
 
   <script src="game.js"></script>
