@@ -77,40 +77,54 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.6s ease;
     transform-style: preserve-3d;
     position: relative;
 }
 
 .memory-game .card:hover {
-    transform: scale(1.05);
+    transform: scale(1.05) rotateY(0deg);
 }
 
 .memory-game .card.flipped {
-    background: var(--card-bg);
     transform: rotateY(180deg);
 }
 
 .memory-game .card.matched {
     background: var(--success-color);
-    transform: scale(0.95);
+    transform: rotateY(180deg) scale(0.95);
     opacity: 0.7;
 }
 
-.memory-game .card-content {
-    font-size: 2.5rem;
+.memory-game .card-content,
+.memory-game .card-back {
+    position: absolute;
+    backface-visibility: hidden;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: opacity 0.3s ease;
 }
 
-.memory-game .card:not(.flipped):not(.matched) .card-content {
-    opacity: 0;
+.memory-game .card-content {
+    transform: rotateY(180deg);
+    background: var(--card-bg);
 }
 
 .memory-game .card-back {
-    position: absolute;
+    background: var(--primary-color);
     font-size: 2rem;
     color: var(--text-color);
-    pointer-events: none;
+}
+
+.memory-game .card:not(.flipped) .card-content {
+    opacity: 0;
+}
+
+.memory-game .card.flipped .card-back {
+    opacity: 0;
 }
 
 .memory-game .restart-btn {
