@@ -1,4 +1,5 @@
 function initMemoryGame() {
+    console.log('Initializing Memory Game');
     const emojis = ['🎮', '🎯', '🎨', '🎪', '🎭', '🎰', '🎲', '🎸'];
     let cards = [];
     let flippedCards = [];
@@ -10,6 +11,7 @@ function initMemoryGame() {
     let timerInterval = null;
 
     function initializeGame() {
+        console.log('Initializing game state');
         cards = [];
         flippedCards = [];
         moves = 0;
@@ -38,7 +40,12 @@ function initMemoryGame() {
     }
 
     function renderCards() {
+        console.log('Rendering cards');
         const gameBoard = document.getElementById('gameBoard');
+        if (!gameBoard) {
+            console.error('Game board not found');
+            return;
+        }
         gameBoard.innerHTML = '';
         
         cards.forEach(card => {
@@ -56,6 +63,7 @@ function initMemoryGame() {
     }
 
     function handleCardClick(cardId) {
+        console.log(`Card clicked: ${cardId}`);
         if (!gameStarted) {
             gameStarted = true;
             startTime = Date.now();
@@ -104,6 +112,7 @@ function initMemoryGame() {
     }
 
     function startTimer() {
+        console.log('Starting timer');
         timerInterval = setInterval(() => {
             elapsedTime = Math.floor((Date.now() - startTime) / 1000);
             updateStats();
@@ -123,6 +132,7 @@ function initMemoryGame() {
     }
 
     function endGame() {
+        console.log('Game ended');
         clearInterval(timerInterval);
         const winModal = document.getElementById('winModal');
         const winMessage = document.getElementById('winMessage');
@@ -144,4 +154,9 @@ function initMemoryGame() {
     });
 }
 
-initMemoryGame();
+// Ensure the game initializes when the script loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMemoryGame);
+} else {
+    initMemoryGame();
+}
