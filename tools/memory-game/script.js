@@ -51,7 +51,8 @@ function initMemoryGame() {
         cards.forEach(card => {
             const cardElement = document.createElement('div');
             cardElement.className = `card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''}`;
-            cardElement.onclick = () => handleCardClick(card.id);
+            cardElement.dataset.cardId = card.id; // Add data attribute for click event
+            cardElement.addEventListener('click', () => handleCardClick(card.id)); // Use event listener
             
             cardElement.innerHTML = `
                 <div class="card-content">${card.emoji}</div>
@@ -72,6 +73,7 @@ function initMemoryGame() {
         
         const card = cards.find(c => c.id === cardId);
         if (!card || card.isFlipped || card.isMatched || flippedCards.length === 2) {
+            console.log('Click ignored: invalid state');
             return;
         }
         
