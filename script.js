@@ -1,3 +1,4 @@
+// Theme Management
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -59,6 +60,7 @@ function addThemeToggle() {
     updateThemeIcon();
 }
 
+// Tool Loading System
 document.addEventListener('DOMContentLoaded', function() {
     initializeTheme();
     addThemeToggle();
@@ -67,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const pillarButtons = document.querySelectorAll('.pillar-btn');
     const toolContainer = document.getElementById('tool-container');
     
+    // Tool button clicks
     toolButtons.forEach(button => {
         button.addEventListener('click', function() {
             toolButtons.forEach(btn => btn.classList.remove('active'));
@@ -80,11 +83,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 page_title: toolName.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
                 page_path: `/tools/${toolName}`
             });
+            // Dispatch toolChange event
             const event = new CustomEvent('toolChange', { detail: { tool: toolName } });
             document.dispatchEvent(event);
         });
     });
     
+    // Pillar button clicks for touch devices
     pillarButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
@@ -143,8 +148,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn(`No styles.css found for ${toolName}, relying on main styles`);
             }
             
-            loadToolScript(toolName);
-            
+            if (toolName === 'image-to-webp-converter') {
+                if (!window.JSZip) {
+                    const jszipScript = document.createElement('script');
+                    jszipScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+                    toolContainer.appendChild(jszipScript);
+                    
+                    jszipScript.onload = () => {
+                        if (!window.saveAs) {
+                            const fileSaverScript = document.createElement('script');
+                            fileSaverScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
+                            fileSaverScript.onload = () => {
+                                const script = document.createElement('script');
+                                script.src = `tools/${toolName}/script.js`;
+                                toolContainer.appendChild(script);
+                            };
+                            toolContainer.appendChild(fileSaverScript);
+                        } else {
+                            const script = document.createElement('script');
+                            script.src = `tools/${toolName}/script.js`;
+                            toolContainer.appendChild(script);
+                        }
+                    };
+                } else if (!window.saveAs) {
+                    const fileSaverScript = document.createElement('script');
+                    fileSaverScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
+                    fileSaverScript.onload = () => {
+                        const script = document.createElement('script');
+                        script.src = `tools/${toolName}/script.js`;
+                        toolContainer.appendChild(script);
+                    };
+                    toolContainer.appendChild(fileSaverScript);
+                } else {
+                    const script = document.createElement('script');
+                    script.src = `tools/${toolName}/script.js`;
+                    toolContainer.appendChild(script);
+                }
+            } else if (toolName === 'binaural-beats' && !window.Tone) {
+                const toneScript = document.createElement('script');
+                toneScript.src = 'https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.js';
+                toneScript.onload = () => {
+                    const script = document.createElement('script');
+                    script.src = `tools/${toolName}/script.js`;
+                    toolContainer.appendChild(script);
+                };
+                toolContainer.appendChild(toneScript);
+            } else {
+                const script = document.createElement('script');
+                script.src = `tools/${toolName}/script.js`;
+                script.onload = () => {
+                    console.log(`Script loaded for ${toolName}`);
+                    if (window.initMemoryGame && toolName === 'memory-game') {
+                        window.initMemoryGame();
+                    }
+                };
+                script.onerror = () => console.error(`Failed to load script for ${toolName}`);
+                toolContainer.appendChild(script);
+            }
             console.log(`Loaded tool: ${toolName}`);
         } catch (error) {
             toolContainer.innerHTML = `
@@ -155,49 +215,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         }
-    }
-    
-    function loadToolScript(toolName) {
-        if (toolName === 'image-to-webp-converter') {
-            if (!window.JSZip) {
-                const jszipScript = document.createElement('script');
-                jszipScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-                toolContainer.appendChild(jszipScript);
-                
-                jszipScript.onload = () => {
-                    if (!window.saveAs) {
-                        const fileSaverScript = document.createElement('script');
-                        fileSaverScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
-                        fileSaverScript.onload = () => loadLocalScript(toolName);
-                        toolContainer.appendChild(fileSaverScript);
-                    } else {
-                        loadLocalScript(toolName);
-                    }
-                };
-            } else if (!window.saveAs) {
-                const fileSaverScript = document.createElement('script');
-                fileSaverScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
-                fileSaverScript.onload = () => loadLocalScript(toolName);
-                toolContainer.appendChild(fileSaverScript);
-            } else {
-                loadLocalScript(toolName);
-            }
-        } else if (toolName === 'binaural-beats' && !window.Tone) {
-            const toneScript = document.createElement('script');
-            toneScript.src = 'https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.js';
-            toneScript.onload = () => loadLocalScript(toolName);
-            toolContainer.appendChild(toneScript);
-        } else {
-            loadLocalScript(toolName);
-        }
-    }
-    
-    function loadLocalScript(toolName) {
-        const script = document.createElement('script');
-        script.src = `tools/${toolName}/script.js`;
-        script.onload = () => console.log(`Script loaded for ${toolName}`);
-        script.onerror = () => console.error(`Failed to load script for ${toolName}`);
-        toolContainer.appendChild(script);
     }
     
     window.addEventListener('resize', function() {
