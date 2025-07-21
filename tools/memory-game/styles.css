@@ -1,26 +1,18 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 20px;
-}
-
-.game-container {
+.memory-game {
     max-width: 600px;
     margin: 0 auto;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    color: var(--text-color);
 }
 
-.game-title {
+.memory-game .game-title {
     text-align: center;
     font-size: 2.5rem;
     font-weight: bold;
-    color: white;
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
@@ -28,7 +20,7 @@ body {
     gap: 0.5rem;
 }
 
-.sparkle {
+.memory-game .sparkle {
     animation: sparkle 2s ease-in-out infinite;
 }
 
@@ -37,49 +29,49 @@ body {
     50% { transform: scale(1.2) rotate(180deg); }
 }
 
-.game-subtitle {
+.memory-game .game-subtitle {
     text-align: center;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-color);
     margin-bottom: 2rem;
 }
 
-.stats {
+.memory-game .stats {
     display: flex;
     justify-content: center;
     gap: 1rem;
     margin-bottom: 2rem;
 }
 
-.stat-card {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+.memory-game .stat-card {
+    background: var(--console-bg);
     border-radius: 10px;
     padding: 1rem;
     text-align: center;
     min-width: 80px;
+    border: 1px solid var(--border-color);
 }
 
-.stat-value {
+.memory-game .stat-value {
     font-size: 1.5rem;
     font-weight: bold;
-    color: white;
+    color: var(--primary-color);
 }
 
-.stat-label {
+.memory-game .stat-label {
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-color);
 }
 
-.game-board {
+.memory-game .game-board {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.75rem;
     margin-bottom: 2rem;
 }
 
-.card {
+.memory-game .card {
     aspect-ratio: 1;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: var(--primary-color);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -90,55 +82,42 @@ body {
     position: relative;
 }
 
-.card:hover {
+.memory-game .card:hover {
     transform: scale(1.05);
 }
 
-.card.flipped {
-    background: white;
+.memory-game .card.flipped {
+    background: var(--card-bg);
     transform: rotateY(180deg);
 }
 
-.card.matched {
-    background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+.memory-game .card.matched {
+    background: var(--success-color);
     transform: scale(0.95);
     opacity: 0.7;
 }
 
-.card-content {
+.memory-game .card-content {
     font-size: 2.5rem;
     transition: opacity 0.3s ease;
 }
 
-.card:not(.flipped):not(.matched) .card-content {
+.memory-game .card:not(.flipped):not(.matched) .card-content {
     opacity: 0;
 }
 
-.card-back {
+.memory-game .card-back {
     position: absolute;
     font-size: 2rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-color);
     pointer-events: none;
 }
 
-.restart-btn {
-    display: block;
+.memory-game .restart-btn {
     margin: 0 auto;
-    padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform 0.2s ease;
 }
 
-.restart-btn:hover {
-    transform: translateY(-2px);
-}
-
-.win-modal {
+.memory-game .win-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -151,58 +130,49 @@ body {
     z-index: 1000;
 }
 
-.win-modal.show {
+.memory-game .win-modal.show {
     display: flex;
 }
 
-.win-content {
-    background: white;
+.memory-game .win-content {
+    background: var(--card-bg);
     padding: 2rem;
     border-radius: 20px;
     text-align: center;
     max-width: 300px;
+    color: var(--text-color);
 }
 
-.trophy {
+.memory-game .trophy {
     font-size: 4rem;
     margin-bottom: 1rem;
 }
 
-.win-content h2 {
-    color: #333;
+.memory-game .win-content h2 {
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
 
-.win-content p {
-    color: #666;
+.memory-game .win-content p {
+    color: var(--text-color);
     margin-bottom: 1.5rem;
 }
 
-.play-again-btn {
-    padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
 @media (max-width: 480px) {
-    .game-title {
+    .memory-game .game-title {
         font-size: 2rem;
     }
     
-    .stats {
+    .memory-game .stats {
         gap: 0.5rem;
     }
     
-    .stat-card {
+    .memory-game .stat-card {
         padding: 0.75rem;
         min-width: 70px;
     }
     
-    .card-content {
+    .memory-game .card-content {
         font-size: 2rem;
     }
 }
