@@ -88,6 +88,7 @@
 
 .memory-game .card.flipped {
     transform: rotateY(180deg);
+    background: var(--bg-color);
 }
 
 .memory-game .card.matched {
