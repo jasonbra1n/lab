@@ -23,3 +23,12 @@ if (loadingStatusElement) {
 } else {
     console.error('Loading status element not found');
 }
+
+const script = document.createElement('script');
+script.src = '/tools/moon-phase/astronomy.browser.js';
+document.body.appendChild(script);
+
+// Optionally, use onload to run code after it's loaded
+script.onload = () => {
+  // Call functions or use objects provided by astronomy.browser.js
+};
