@@ -1,3 +1,6 @@
+window.initMemoryGame = function() {
+  // all your current initMemoryGame code here
+
 function initMemoryGame() {
     console.log('Initializing Memory Game');
     const emojis = ['🎮', '🎯', '🎨', '🎪', '🎭', '🎰', '🎲', '🎸'];
@@ -162,3 +165,4 @@ if (document.readyState === 'loading') {
 } else {
     initMemoryGame();
 }
+};
