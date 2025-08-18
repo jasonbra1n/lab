@@ -50,38 +50,12 @@
     border: 1px solid var(--border-color);
 }
 
-.vu-meter.bar .vu-level {
+.vu-level {
     position: absolute;
     bottom: 0;
     width: 100%;
     background: green;
     transition: height 0.1s ease, background 0.1s ease;
-}
-
-.vu-meter.wave .vu-level {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, green, yellow, red);
-    clip-path: polygon(0 100%, 100% 100%, 50% 0);
-    transition: transform 0.1s ease;
-}
-
-.vu-meter.circle .vu-level {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 80%;
-    height: 80%;
-    background: radial-gradient(circle, green, yellow, red);
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    transition: transform 0.1s ease;
-}
-
-.vu-level {
-    transition: all 0.1s ease;
 }
 
 .player-content {
