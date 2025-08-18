@@ -33,7 +33,7 @@ function initRadioStreamPlayer() {
 
     if (!audio) {
         audio = new Audio();
-        audio.crossOrigin = 'anonymous';
+        audio.crossOrigin = 'anonymous'; // Ensure CORS is handled
         state.audio = audio;
 
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -93,32 +93,54 @@ function initRadioStreamPlayer() {
     }
 
     // Cycle VU meter styles
-    vuStyleBtn.addEventListener('click', () => {
-        const styles = ['bar', 'wave', 'circle'];
-        const currentIndex = styles.indexOf(state.vuStyle);
-        const nextIndex = (currentIndex + 1) % styles.length;
-        state.vuStyle = styles[nextIndex];
-        leftVuLevel.parentElement.className = `vu-meter ${state.vuStyle}`;
-        rightVuLevel.parentElement.className = `vu-meter ${state.vuStyle}`;
-        console.log(`Switched to VU style: ${state.vuStyle}`);
-    });
+    if (vuStyleBtn) {
+        vuStyleBtn.addEventListener('click', () => {
+            const styles = ['bar', 'wave', 'circle'];
+            const currentIndex = styles.indexOf(state.vuStyle);
+            const nextIndex = (currentIndex + 1) % styles.length;
+            state.vuStyle = styles[nextIndex];
+            leftVuLevel.parentElement.className = `vu-meter ${state.vuStyle}`;
+            rightVuLevel.parentElement.className = `vu-meter ${state.vuStyle}`;
+            console.log(`Switched to VU style: ${state.vuStyle}`);
+        });
+    }
 
     playPauseBtn.addEventListener('click', () => {
         if (isPlaying) {
             audio.pause();
-            playPauseBtn.textContent = 'Play';
             cancelAnimationFrame(state.animationFrameId);
             state.animationFrameId = null;
+            playPauseBtn.textContent = 'Play';
         } else {
-            audio.src = stationSelect.value;
+            // Ensure AudioContext is running
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    console.log('AudioContext resumed');
+                });
+            }
+            audio.src = stationSelect.value; // Set source before play
             audio.play().catch(err => {
                 console.error('Playback failed:', err);
-                nowPlaying.textContent = 'Error: Unable to play stream';
+                nowPlaying.textContent = 'Error: Unable to play stream. Check station or network.';
+                // Fallback to next station if possible
+                const options = stationSelect.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value !== stationSelect.value) {
+                        stationSelect.value = options[i].value;
+                        audio.src = stationSelect.value;
+                        audio.play().catch(err => {
+                            console.error('Fallback playback failed:', err);
+                        });
+                        updateNowPlaying();
+                        break;
+                    }
+                }
+            }).then(() => {
+                playPauseBtn.textContent = 'Pause';
+                if (!state.animationFrameId) {
+                    updateVUMeters();
+                }
             });
-            playPauseBtn.textContent = 'Pause';
-            if (!state.animationFrameId) {
-                updateVUMeters();
-            }
         }
         isPlaying = !isPlaying;
         state.isPlaying = isPlaying;
@@ -188,7 +210,6 @@ function initRadioStreamPlayer() {
         }
     }
 
-    // Initialize with current state
     if (state.currentStation) {
         stationSelect.value = state.currentStation;
     }
