@@ -9,8 +9,7 @@ window.radioStreamState = window.radioStreamState || {
     analyserLeft: null,
     analyserRight: null,
     animationFrameId: null,
-    popoutWindow: null,
-    vuStyle: 'bar' // Track current VU meter style
+    popoutWindow: null
 };
 
 function initRadioStreamPlayer() {
@@ -29,11 +28,10 @@ function initRadioStreamPlayer() {
     const nowPlaying = document.getElementById('now-playing');
     const leftVuLevel = document.getElementById('left-vu-level');
     const rightVuLevel = document.getElementById('right-vu-level');
-    const vuStyleBtn = document.getElementById('vu-style-btn');
 
     if (!audio) {
         audio = new Audio();
-        audio.crossOrigin = 'anonymous'; // Ensure CORS is handled
+        audio.crossOrigin = 'anonymous';
         state.audio = audio;
 
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -60,31 +58,15 @@ function initRadioStreamPlayer() {
     const dataArrayLeft = new Uint8Array(bufferLength);
     const dataArrayRight = new Uint8Array(bufferLength);
 
+    audio.src = state.currentStation || stationSelect.value;
+    audio.volume = state.volume || volumeSlider.value;
     let isPlaying = state.isPlaying;
-    let currentStation = state.currentStation;
 
-    function updateVUMeters() {
-        analyserLeft.getByteFrequencyData(dataArrayLeft);
-        analyserRight.getByteFrequencyData(dataArrayRight);
-
-        const leftLevel = Math.max(...dataArrayLeft) / 255;
-        const rightLevel = Math.max(...dataArrayRight) / 255;
-
-        if (state.vuStyle === 'bar') {
-            leftVuLevel.style.height = `${leftLevel * 100}%`;
-            rightVuLevel.style.height = `${rightLevel * 100}%`;
-            leftVuLevel.style.background = leftLevel > 0.7 ? 'red' : leftLevel > 0.4 ? 'yellow' : 'green';
-            rightVuLevel.style.background = rightLevel > 0.7 ? 'red' : rightLevel > 0.4 ? 'yellow' : 'green';
-        } else if (state.vuStyle === 'wave') {
-            leftVuLevel.style.transform = `translateY(${((1 - leftLevel) * 100)}%)`;
-            rightVuLevel.style.transform = `translateY(${((1 - rightLevel) * 100)}%)`;
-        } else if (state.vuStyle === 'circle') {
-            leftVuLevel.style.transform = `translate(-50%, -50%) scale(${leftLevel})`;
-            rightVuLevel.style.transform = `translate(-50%, -50%) scale(${rightLevel})`;
-        }
-
-        state.animationFrameId = requestAnimationFrame(updateVUMeters);
+    if (state.currentStation) {
+        stationSelect.value = state.currentStation;
     }
+    volumeSlider.value = audio.volume;
+    playPauseBtn.textContent = isPlaying ? 'Pause' : 'Play';
 
     function updateNowPlaying() {
         const stationName = stationSelect.options[stationSelect.selectedIndex].text;
@@ -92,69 +74,72 @@ function initRadioStreamPlayer() {
         state.currentStation = stationSelect.value;
     }
 
-    // Cycle VU meter styles
-    if (vuStyleBtn) {
-        vuStyleBtn.addEventListener('click', () => {
-            const styles = ['bar', 'wave', 'circle'];
-            const currentIndex = styles.indexOf(state.vuStyle);
-            const nextIndex = (currentIndex + 1) % styles.length;
-            state.vuStyle = styles[nextIndex];
-            leftVuLevel.parentElement.className = `vu-meter ${state.vuStyle}`;
-            rightVuLevel.parentElement.className = `vu-meter ${state.vuStyle}`;
-            console.log(`Switched to VU style: ${state.vuStyle}`);
-        });
+    function updateVUMeters() {
+        if (!isPlaying) {
+            leftVuLevel.style.height = '0%';
+            rightVuLevel.style.height = '0%';
+            leftVuLevel.style.background = 'green';
+            rightVuLevel.style.background = 'green';
+            state.animationFrameId = requestAnimationFrame(updateVUMeters);
+            return;
+        }
+
+        analyserLeft.getByteTimeDomainData(dataArrayLeft);
+        analyserRight.getByteTimeDomainData(dataArrayRight);
+
+        let sumLeft = 0;
+        for (let i = 0; i < bufferLength; i++) {
+            const sample = (dataArrayLeft[i] - 128) / 128;
+            sumLeft += sample * sample;
+        }
+        const rmsLeft = Math.sqrt(sumLeft / bufferLength);
+        const levelLeft = Math.min(rmsLeft * 200, 100);
+
+        let sumRight = 0;
+        for (let i = 0; i < bufferLength; i++) {
+            const sample = (dataArrayRight[i] - 128) / 128;
+            sumRight += sample * sample;
+        }
+        const rmsRight = Math.sqrt(sumRight / bufferLength);
+        const levelRight = Math.min(rmsRight * 200, 100);
+
+        leftVuLevel.style.height = `${levelLeft}%`;
+        rightVuLevel.style.height = `${levelRight}%`;
+
+        const colorLeft = levelLeft < 60 ? 'green' : levelLeft < 85 ? 'yellow' : 'red';
+        const colorRight = levelRight < 60 ? 'green' : levelRight < 85 ? 'yellow' : 'red';
+        leftVuLevel.style.background = colorLeft;
+        rightVuLevel.style.background = colorRight;
+
+        state.animationFrameId = requestAnimationFrame(updateVUMeters);
     }
 
     playPauseBtn.addEventListener('click', () => {
         if (isPlaying) {
             audio.pause();
-            cancelAnimationFrame(state.animationFrameId);
-            state.animationFrameId = null;
             playPauseBtn.textContent = 'Play';
         } else {
-            // Ensure AudioContext is running
-            if (audioContext.state === 'suspended') {
-                audioContext.resume().then(() => {
-                    console.log('AudioContext resumed');
-                });
-            }
-            audio.src = stationSelect.value; // Set source before play
             audio.play().catch(err => {
                 console.error('Playback failed:', err);
-                nowPlaying.textContent = 'Error: Unable to play stream. Check station or network.';
-                // Fallback to next station if possible
-                const options = stationSelect.options;
-                for (let i = 0; i < options.length; i++) {
-                    if (options[i].value !== stationSelect.value) {
-                        stationSelect.value = options[i].value;
-                        audio.src = stationSelect.value;
-                        audio.play().catch(err => {
-                            console.error('Fallback playback failed:', err);
-                        });
-                        updateNowPlaying();
-                        break;
-                    }
-                }
-            }).then(() => {
-                playPauseBtn.textContent = 'Pause';
-                if (!state.animationFrameId) {
-                    updateVUMeters();
-                }
+                nowPlaying.textContent = 'Error: Unable to play stream';
             });
+            playPauseBtn.textContent = 'Pause';
         }
         isPlaying = !isPlaying;
         state.isPlaying = isPlaying;
+        updateNowPlaying();
     });
 
     stationSelect.addEventListener('change', () => {
+        audio.src = stationSelect.value;
+        state.currentStation = stationSelect.value;
+        updateNowPlaying();
         if (isPlaying) {
-            audio.src = stationSelect.value;
             audio.play().catch(err => {
                 console.error('Playback failed:', err);
                 nowPlaying.textContent = 'Error: Unable to play stream';
             });
         }
-        updateNowPlaying();
     });
 
     volumeSlider.addEventListener('input', () => {
@@ -175,9 +160,10 @@ function initRadioStreamPlayer() {
             playPauseBtn.textContent = 'Play';
         }
 
+        // Pass the current theme to the pop-out window
         const currentTheme = document.documentElement.classList.contains('dark-theme') ? 'dark-theme' : 'light-theme';
         const popoutUrl = `tools/radiostream-player/popout.html?station=${encodeURIComponent(stationSelect.value)}&theme=${currentTheme}`;
-        state.popoutWindow = window.open(popoutUrl, 'RadioStreamPopout', 'width=300,height=250');
+        state.popoutWindow = window.open(popoutUrl, 'RadioStreamPopout', 'width=300,height=278'); // Reduced height to 250px
     });
 
     window.addEventListener('message', (event) => {
@@ -194,6 +180,9 @@ function initRadioStreamPlayer() {
         }
     });
 
+    updateVUMeters();
+    updateNowPlaying();
+
     window.addEventListener('beforeunload', cleanup);
     document.addEventListener('toolUnload', cleanup);
 
@@ -208,17 +197,6 @@ function initRadioStreamPlayer() {
             cancelAnimationFrame(state.animationFrameId);
             state.animationFrameId = null;
         }
-    }
-
-    if (state.currentStation) {
-        stationSelect.value = state.currentStation;
-    }
-    volumeSlider.value = state.volume;
-    audio.volume = state.volume;
-    updateNowPlaying();
-    if (isPlaying) {
-        playPauseBtn.textContent = 'Pause';
-        updateVUMeters();
     }
 }
 
