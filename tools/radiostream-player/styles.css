@@ -18,16 +18,16 @@
 .popout-player {
     background: var(--card-bg);
     border-radius: 8px;
-    padding: 10px; /* Reduced padding */
+    padding: 10px;
     text-align: center;
     border: 1px solid var(--border-color);
     width: 100%;
     box-sizing: border-box;
-    min-height: 100%; /* Ensure it fills the window */
+    min-height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center content vertically */
-    gap: 8px; /* Add a small gap between elements */
+    justify-content: center;
+    gap: 8px;
 }
 
 .vu-meters {
@@ -37,25 +37,208 @@
     gap: 10px;
     width: 80px;
     align-items: stretch;
+    position: relative;
 }
 
+/* VU Style Cycle Button */
+.vu-style-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.vu-style-btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.1);
+}
+
+/* Base VU Meter Styles */
 .vu-meter {
     background: var(--console-bg);
     border-radius: 8px;
     height: 100%;
-    width: 15px;
+    width: 30px;
     position: relative;
     overflow: hidden;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Classic VU Style */
+.vu-classic .vu-meter {
+    width: 15px;
 }
 
 .vu-level {
     position: absolute;
     bottom: 0;
     width: 100%;
-    background: green;
+    background: #00ff00;
     transition: height 0.1s ease, background 0.1s ease;
+}
+
+/* LED VU Style */
+.vu-led .vu-meter {
+    width: 20px;
+    padding: 2px;
+}
+
+.led-container {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 1px;
+    height: 100%;
+    width: 100%;
+}
+
+.led-segment {
+    width: 100%;
+    height: 4px;
+    background: #00ff00;
+    border-radius: 1px;
+    opacity: 0.1;
+    transition: opacity 0.1s ease, background 0.1s ease;
+}
+
+/* Circular VU Style */
+.vu-circular .vu-meter {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.vu-circular .vu-meters {
+    width: 140px;
+    gap: 20px;
+}
+
+.circular-level {
+    transition: stroke-dashoffset 0.1s ease, stroke 0.1s ease;
+}
+
+/* Waveform VU Style */
+.vu-waveform .vu-meter {
+    width: 60px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+}
+
+.vu-waveform .vu-meters {
+    width: 140px;
+    gap: 20px;
+}
+
+.waveform-canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
+
+/* Spectrum VU Style */
+.vu-spectrum .vu-meter {
+    width: 60px;
+    padding: 2px;
+}
+
+.vu-spectrum .vu-meters {
+    width: 140px;
+    gap: 20px;
+}
+
+.spectrum-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    gap: 1px;
+}
+
+.spectrum-bar {
+    background: #00ff00;
+    width: 3px;
+    min-height: 2px;
+    transition: height 0.1s ease, background 0.1s ease;
+    border-radius: 1px 1px 0 0;
+}
+
+/* Retro VU Style */
+.vu-retro .vu-meter {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, var(--console-bg) 60%, var(--border-color) 100%);
+    border-radius: 50% 50% 0 0;
+    overflow: visible;
+    position: relative;
+}
+
+.vu-retro .vu-meters {
+    width: 140px;
+    gap: 20px;
+}
+
+.retro-vu {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.retro-scale {
+    position: absolute;
+    bottom: 5px;
+    font-size: 6px;
+    color: var(--text-color);
+    opacity: 0.7;
+    white-space: nowrap;
+    letter-spacing: -0.5px;
+}
+
+.retro-needle {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 1px;
+    height: 25px;
+    border-left: 2px solid #00ff00;
+    transform-origin: bottom center;
+    transform: translate(-50%, 0) rotate(-45deg);
+    transition: transform 0.2s ease, border-color 0.1s ease;
+    z-index: 5;
+}
+
+.retro-needle::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: -2px;
+    width: 4px;
+    height: 4px;
+    background: var(--primary-color);
+    border-radius: 50%;
 }
 
 .player-content {
@@ -166,17 +349,17 @@
 
 /* Adjustments for pop-out player */
 .popout-player .station-selector select {
-    padding: 6px; /* Reduced padding */
+    padding: 6px;
     font-size: 0.9rem;
 }
 
 .popout-player .player-controls {
-    margin: 5px 0; /* Reduced margin */
-    gap: 8px; /* Reduced gap */
+    margin: 5px 0;
+    gap: 8px;
 }
 
 .popout-player .volume-control {
-    max-width: 180px; /* Slightly smaller for better fit */
+    max-width: 180px;
 }
 
 .popout-player .volume-control input[type="range"] {
@@ -194,10 +377,11 @@
 }
 
 .popout-player .now-playing {
-    font-size: 0.9em; /* Slightly smaller font */
-    padding: 6px; /* Reduced padding */
+    font-size: 0.9em;
+    padding: 6px;
 }
 
+/* Mobile Responsive Styles */
 @media (max-width: 500px) {
     .radiostream-player {
         flex-direction: column;
@@ -209,19 +393,98 @@
         flex-direction: row;
         width: 100%;
         justify-content: center;
-        gap: 20px;
+        height: 60px;
     }
 
-    .vu-meter {
+    /* Mobile Classic Style */
+    .vu-classic .vu-meter {
         width: 60px;
         height: 20px;
     }
 
-    .vu-level {
+    .vu-classic .vu-level {
         height: 100%;
         width: 0%;
         bottom: auto;
         left: 0;
+    }
+
+    /* Mobile LED Style */
+    .vu-led .vu-meter {
+        width: 80px;
+        height: 20px;
+    }
+
+    .vu-led .led-container {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .vu-led .led-segment {
+        width: 3px;
+        height: 100%;
+    }
+
+    /* Mobile Circular Style */
+    .vu-circular .vu-meters {
+        width: 100%;
+        gap: 30px;
+        justify-content: center;
+    }
+
+    .vu-circular .vu-meter {
+        width: 50px;
+        height: 50px;
+    }
+
+    /* Mobile Waveform Style */
+    .vu-waveform .vu-meters {
+        width: 100%;
+        gap: 30px;
+    }
+
+    .vu-waveform .vu-meter {
+        width: 80px;
+        height: 40px;
+    }
+
+    /* Mobile Spectrum Style */
+    .vu-spectrum .vu-meters {
+        width: 100%;
+        gap: 30px;
+    }
+
+    .vu-spectrum .vu-meter {
+        width: 80px;
+        height: 40px;
+    }
+
+    .vu-spectrum .spectrum-container {
+        align-items: flex-end;
+    }
+
+    .vu-spectrum .spectrum-bar {
+        width: 4px;
+    }
+
+    /* Mobile Retro Style */
+    .vu-retro .vu-meters {
+        width: 100%;
+        gap: 30px;
+        justify-content: center;
+    }
+
+    .vu-retro .vu-meter {
+        width: 50px;
+        height: 50px;
+    }
+
+    .vu-retro .retro-scale {
+        font-size: 5px;
+    }
+
+    .vu-retro .retro-needle {
+        height: 20px;
     }
 
     .station-selector label,
@@ -232,4 +495,58 @@
     .now-playing {
         font-size: 1em;
     }
+
+    .vu-style-btn {
+        top: -10px;
+        right: -10px;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+    }
+}
+
+/* Dark theme adjustments for VU meters */
+.dark-theme .waveform-canvas {
+    filter: brightness(1.2);
+}
+
+.dark-theme .retro-vu {
+    background: radial-gradient(circle, var(--console-bg) 60%, var(--border-color) 100%);
+}
+
+.dark-theme .led-segment {
+    box-shadow: 0 0 2px currentColor;
+}
+
+.dark-theme .spectrum-bar {
+    box-shadow: 0 0 1px currentColor;
+}
+
+/* Animation enhancements */
+.vu-meter {
+    transition: all 0.3s ease;
+}
+
+.vu-style-btn {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    50% { box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4); }
+    100% { box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+}
+
+/* Hover effects */
+.vu-meters:hover .vu-style-btn {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.vu-circular svg:hover .circular-level {
+    stroke-width: 10;
+}
+
+.vu-retro .retro-vu:hover .retro-needle::after {
+    box-shadow: 0 0 4px var(--primary-color);
 }
