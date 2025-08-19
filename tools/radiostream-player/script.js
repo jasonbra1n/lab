@@ -14,7 +14,7 @@ window.radioStreamState = window.radioStreamState || {
 };
 
 const VU_STYLES = [
-    'classic', 'led', 'circular', 'waveform', 'spectrum', 'retro'
+    'classic', 'led', 'waveform', 'spectrum'
 ];
 
 function initRadioStreamPlayer() {
@@ -111,10 +111,6 @@ function initRadioStreamPlayer() {
                 createLedVu(leftVu, 'left');
                 createLedVu(rightVu, 'right');
                 break;
-            case 'circular':
-                createCircularVu(leftVu, 'left');
-                createCircularVu(rightVu, 'right');
-                break;
             case 'waveform':
                 createWaveformVu(leftVu, 'left');
                 createWaveformVu(rightVu, 'right');
@@ -122,10 +118,6 @@ function initRadioStreamPlayer() {
             case 'spectrum':
                 createSpectrumVu(leftVu, 'left');
                 createSpectrumVu(rightVu, 'right');
-                break;
-            case 'retro':
-                createRetroVu(leftVu, 'left');
-                createRetroVu(rightVu, 'right');
                 break;
         }
     }
@@ -149,38 +141,6 @@ function initRadioStreamPlayer() {
         container.appendChild(ledContainer);
     }
 
-    function createCircularVu(container, channel) {
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', '35');
-        svg.setAttribute('height', '35');
-        svg.setAttribute('viewBox', '0 0 40 40');
-        
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', '20');
-        circle.setAttribute('cy', '20');
-        circle.setAttribute('r', '15');
-        circle.setAttribute('fill', 'none');
-        circle.setAttribute('stroke', 'var(--border-color)');
-        circle.setAttribute('stroke-width', '4');
-        
-        const levelCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        levelCircle.setAttribute('cx', '20');
-        levelCircle.setAttribute('cy', '20');
-        levelCircle.setAttribute('r', '15');
-        levelCircle.setAttribute('fill', 'none');
-        levelCircle.setAttribute('stroke', '#00ff00');
-        levelCircle.setAttribute('stroke-width', '4');
-        levelCircle.setAttribute('stroke-linecap', 'round');
-        levelCircle.setAttribute('stroke-dasharray', '94.25'); // 2 * π * 15
-        levelCircle.setAttribute('stroke-dashoffset', '94.25');
-        levelCircle.setAttribute('transform', 'rotate(-90 20 20)');
-        levelCircle.className = 'circular-level';
-        
-        svg.appendChild(circle);
-        svg.appendChild(levelCircle);
-        container.appendChild(svg);
-    }
-
     function createWaveformVu(container, channel) {
         const canvas = document.createElement('canvas');
         canvas.width = 60;
@@ -199,22 +159,6 @@ function initRadioStreamPlayer() {
             spectrumContainer.appendChild(bar);
         }
         container.appendChild(spectrumContainer);
-    }
-
-    function createRetroVu(container, channel) {
-        const retro = document.createElement('div');
-        retro.className = 'retro-vu';
-        
-        const needle = document.createElement('div');
-        needle.className = 'retro-needle';
-        
-        const scale = document.createElement('div');
-        scale.className = 'retro-scale';
-        scale.innerHTML = '0&nbsp;&nbsp;&nbsp;20&nbsp;&nbsp;&nbsp;40&nbsp;&nbsp;&nbsp;60&nbsp;&nbsp;&nbsp;80&nbsp;&nbsp;&nbsp;100';
-        
-        retro.appendChild(scale);
-        retro.appendChild(needle);
-        container.appendChild(retro);
     }
 
     function updateVUMeters() {
@@ -242,17 +186,11 @@ function initRadioStreamPlayer() {
             case 'led':
                 updateLedVu(levelLeft, levelRight);
                 break;
-            case 'circular':
-                updateCircularVu(levelLeft, levelRight);
-                break;
             case 'waveform':
                 updateWaveformVu();
                 break;
             case 'spectrum':
                 updateSpectrumVu();
-                break;
-            case 'retro':
-                updateRetroVu(levelLeft, levelRight);
                 break;
         }
 
@@ -310,61 +248,6 @@ function initRadioStreamPlayer() {
         });
     }
 
-    function updateCircularVu(levelLeft, levelRight) {
-        updateCircularChannel(leftVu, levelLeft);
-        updateCircularChannel(rightVu, levelRight);
-    }
-
-    function updateCircularChannel(container, level) {
-        const circle = container.querySelector('.circular-level');
-        if (circle) {
-            const circumference = 94.25; // 2 * π * 15
-            const offset = circumference - (level / 100) * circumference;
-            circle.setAttribute('stroke-dashoffset', offset);
-            circle.setAttribute('stroke', getLevelColor(level));
-        }
-    }
-
-    function updateWaveformVu() {
-        updateWaveformChannel(leftVu, dataArrayLeft);
-        updateWaveformChannel(rightVu, dataArrayRight);
-    }
-
-    function updateWaveformChannel(container, dataArray) {
-        const canvas = container.querySelector('.waveform-canvas');
-        if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width;
-        const height = canvas.height;
-        
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--console-bg');
-        ctx.fillRect(0, 0, width, height);
-        
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#00ff00';
-        ctx.beginPath();
-        
-        // Draw waveform vertically
-        const sliceHeight = height / dataArray.length;
-        let y = 0;
-        
-        for (let i = 0; i < dataArray.length; i++) {
-            const v = (dataArray[i] - 128) / 128;
-            const x = (v * width / 2) + width / 2;
-            
-            if (i === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-            
-            y += sliceHeight;
-        }
-        
-        ctx.stroke();
-    }
-
     function updateSpectrumVu() {
         updateSpectrumChannel(leftVu, frequencyDataLeft);
         updateSpectrumChannel(rightVu, frequencyDataRight);
@@ -388,20 +271,6 @@ function initRadioStreamPlayer() {
         });
     }
 
-    function updateRetroVu(levelLeft, levelRight) {
-        updateRetroChannel(leftVu, levelLeft);
-        updateRetroChannel(rightVu, levelRight);
-    }
-
-    function updateRetroChannel(container, level) {
-        const needle = container.querySelector('.retro-needle');
-        if (needle) {
-            const rotation = -45 + (level / 100) * 90;
-            needle.style.transform = `rotate(${rotation}deg)`;
-            needle.style.borderColor = getLevelColor(level);
-        }
-    }
-
     function resetVuMeters() {
         const currentStyle = VU_STYLES[state.vuStyle];
         
@@ -421,18 +290,6 @@ function initRadioStreamPlayer() {
             case 'led':
                 document.querySelectorAll('.led-segment').forEach(led => {
                     led.style.opacity = '0.1';
-                });
-                break;
-            case 'circular':
-                document.querySelectorAll('.circular-level').forEach(circle => {
-                    circle.setAttribute('stroke-dashoffset', '94.25');
-                    circle.setAttribute('stroke', '#00ff00');
-                });
-                break;
-            case 'retro':
-                document.querySelectorAll('.retro-needle').forEach(needle => {
-                    needle.style.transform = 'rotate(-45deg)';
-                    needle.style.borderColor = '#00ff00';
                 });
                 break;
         }
