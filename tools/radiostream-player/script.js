@@ -10,7 +10,7 @@ window.radioStreamState = window.radioStreamState || {
     analyserRight: null,
     animationFrameId: null,
     popoutWindow: null,
-    vuStyle: 0 // Track current VU meter style
+    vuStyle: 1 // Track current VU meter style (1 = LED default)
 };
 
 const VU_STYLES = [
@@ -345,12 +345,13 @@ function initRadioStreamPlayer() {
         ctx.strokeStyle = '#00ff00';
         ctx.beginPath();
         
-        const sliceWidth = width / dataArray.length;
-        let x = 0;
+        // Draw waveform vertically
+        const sliceHeight = height / dataArray.length;
+        let y = 0;
         
         for (let i = 0; i < dataArray.length; i++) {
             const v = (dataArray[i] - 128) / 128;
-            const y = (v * height / 2) + height / 2;
+            const x = (v * width / 2) + width / 2;
             
             if (i === 0) {
                 ctx.moveTo(x, y);
@@ -358,7 +359,7 @@ function initRadioStreamPlayer() {
                 ctx.lineTo(x, y);
             }
             
-            x += sliceWidth;
+            y += sliceHeight;
         }
         
         ctx.stroke();
