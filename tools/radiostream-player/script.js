@@ -248,27 +248,49 @@ function initRadioStreamPlayer() {
         });
     }
 
+    function updateWaveformVu() {
+        updateWaveformChannel(leftVu, dataArrayLeft);
+        updateWaveformChannel(rightVu, dataArrayRight);
+    }
+
+    function updateWaveformChannel(container, dataArray) {
+        const canvas = container.querySelector('.waveform-canvas');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+        
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--console-bg');
+        ctx.fillRect(0, 0, width, height);
+        
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#00ff00';
+        ctx.beginPath();
+        
+        // Draw waveform vertically
+        const sliceHeight = height / dataArray.length;
+        let y = 0;
+        
+        for (let i = 0; i < dataArray.length; i++) {
+            const v = (dataArray[i] - 128) / 128;
+            const x = (v * width / 2) + width / 2;
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+            
+            y += sliceHeight;
+        }
+        
+        ctx.stroke();
+    }
+
     function updateSpectrumVu() {
         updateSpectrumChannel(leftVu, frequencyDataLeft);
         updateSpectrumChannel(rightVu, frequencyDataRight);
-    }
-
-    function updateSpectrumChannel(container, frequencyData) {
-        const bars = container.querySelectorAll('.spectrum-bar');
-        const barWidth = Math.floor(frequencyData.length / bars.length);
-        
-        bars.forEach((bar, index) => {
-            let sum = 0;
-            const start = index * barWidth;
-            for (let i = start; i < start + barWidth; i++) {
-                sum += frequencyData[i];
-            }
-            const average = sum / barWidth;
-            const height = (average / 255) * 100;
-            
-            bar.style.height = `${height}%`;
-            bar.style.background = getLevelColor(height * 1.5);
-        });
     }
 
     function resetVuMeters() {
