@@ -151,29 +151,35 @@ function initRadioStreamPlayer() {
 
     function createCircularVu(container, channel) {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', '35');
-        svg.setAttribute('height', '35');
-        svg.setAttribute('viewBox', '0 0 40 40');
+        svg.setAttribute('width', '30');
+        svg.setAttribute('height', '30');
+        svg.setAttribute('viewBox', '0 0 34 34');
+        svg.style.position = 'absolute';
+        svg.style.top = '50%';
+        svg.style.left = '50%';
+        svg.style.transform = 'translate(-50%, -50%)';
         
+        // Background circle
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', '20');
-        circle.setAttribute('cy', '20');
-        circle.setAttribute('r', '15');
+        circle.setAttribute('cx', '17');
+        circle.setAttribute('cy', '17');
+        circle.setAttribute('r', '13');
         circle.setAttribute('fill', 'none');
         circle.setAttribute('stroke', 'var(--border-color)');
-        circle.setAttribute('stroke-width', '4');
+        circle.setAttribute('stroke-width', '3');
         
+        // Level circle
         const levelCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        levelCircle.setAttribute('cx', '20');
-        levelCircle.setAttribute('cy', '20');
-        levelCircle.setAttribute('r', '15');
+        levelCircle.setAttribute('cx', '17');
+        levelCircle.setAttribute('cy', '17');
+        levelCircle.setAttribute('r', '13');
         levelCircle.setAttribute('fill', 'none');
         levelCircle.setAttribute('stroke', '#00ff00');
-        levelCircle.setAttribute('stroke-width', '4');
+        levelCircle.setAttribute('stroke-width', '3');
         levelCircle.setAttribute('stroke-linecap', 'round');
-        levelCircle.setAttribute('stroke-dasharray', '94.25'); // 2 * π * 15
-        levelCircle.setAttribute('stroke-dashoffset', '94.25');
-        levelCircle.setAttribute('transform', 'rotate(-90 20 20)');
+        levelCircle.setAttribute('stroke-dasharray', '81.68'); // 2 * π * 13
+        levelCircle.setAttribute('stroke-dashoffset', '81.68');
+        levelCircle.setAttribute('transform', 'rotate(-90 17 17)');
         levelCircle.className = 'circular-level';
         
         svg.appendChild(circle);
@@ -318,7 +324,7 @@ function initRadioStreamPlayer() {
     function updateCircularChannel(container, level) {
         const circle = container.querySelector('.circular-level');
         if (circle) {
-            const circumference = 94.25; // 2 * π * 15
+            const circumference = 81.68; // 2 * π * 13
             const offset = circumference - (level / 100) * circumference;
             circle.setAttribute('stroke-dashoffset', offset);
             circle.setAttribute('stroke', getLevelColor(level));
@@ -425,7 +431,7 @@ function initRadioStreamPlayer() {
                 break;
             case 'circular':
                 document.querySelectorAll('.circular-level').forEach(circle => {
-                    circle.setAttribute('stroke-dashoffset', '94.25');
+                    circle.setAttribute('stroke-dashoffset', '81.68');
                     circle.setAttribute('stroke', '#00ff00');
                 });
                 break;
