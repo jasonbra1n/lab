@@ -149,7 +149,7 @@
 
 .spectrum-bar {
     background: #00ff00;
-    width: 1px;
+    width: 3px;
     min-height: 2px;
     transition: height 0.1s ease, background 0.1s ease;
     border-radius: 1px 1px 0 0;
@@ -382,6 +382,10 @@
     filter: brightness(1.2);
 }
 
+.dark-theme .retro-vu {
+    background: radial-gradient(circle, var(--console-bg) 60%, var(--border-color) 100%);
+}
+
 .dark-theme .led-segment {
     box-shadow: 0 0 2px currentColor;
 }
@@ -409,4 +413,8 @@
 .vu-meters:hover .vu-style-btn {
     opacity: 1;
     transform: scale(1.1);
+}
+
+.vu-spectrum .spectrum-bar:hover {
+    box-shadow: 0 0 2px currentColor;
 }
