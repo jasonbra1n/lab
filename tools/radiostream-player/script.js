@@ -165,8 +165,9 @@ function initRadioStreamPlayer() {
         circle.setAttribute('cy', '17');
         circle.setAttribute('r', '13');
         circle.setAttribute('fill', 'none');
-        circle.setAttribute('stroke', 'var(--border-color)');
-        circle.setAttribute('stroke-width', '3');
+        circle.setAttribute('stroke', '#333');
+        circle.setAttribute('stroke-width', '2');
+        circle.setAttribute('opacity', '0.3');
         
         // Level circle
         const levelCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -175,11 +176,12 @@ function initRadioStreamPlayer() {
         levelCircle.setAttribute('r', '13');
         levelCircle.setAttribute('fill', 'none');
         levelCircle.setAttribute('stroke', '#00ff00');
-        levelCircle.setAttribute('stroke-width', '3');
+        levelCircle.setAttribute('stroke-width', '4');
         levelCircle.setAttribute('stroke-linecap', 'round');
         levelCircle.setAttribute('stroke-dasharray', '81.68'); // 2 * π * 13
         levelCircle.setAttribute('stroke-dashoffset', '81.68');
         levelCircle.setAttribute('transform', 'rotate(-90 17 17)');
+        levelCircle.id = `${channel}-circular-level`;
         levelCircle.className = 'circular-level';
         
         svg.appendChild(circle);
@@ -317,17 +319,21 @@ function initRadioStreamPlayer() {
     }
 
     function updateCircularVu(levelLeft, levelRight) {
-        updateCircularChannel(leftVu, levelLeft);
-        updateCircularChannel(rightVu, levelRight);
-    }
-
-    function updateCircularChannel(container, level) {
-        const circle = container.querySelector('.circular-level');
-        if (circle) {
+        const leftCircle = document.getElementById('left-circular-level');
+        const rightCircle = document.getElementById('right-circular-level');
+        
+        if (leftCircle) {
             const circumference = 81.68; // 2 * π * 13
-            const offset = circumference - (level / 100) * circumference;
-            circle.setAttribute('stroke-dashoffset', offset);
-            circle.setAttribute('stroke', getLevelColor(level));
+            const offset = circumference - (levelLeft / 100) * circumference;
+            leftCircle.setAttribute('stroke-dashoffset', offset);
+            leftCircle.setAttribute('stroke', getLevelColor(levelLeft));
+        }
+        
+        if (rightCircle) {
+            const circumference = 81.68; // 2 * π * 13
+            const offset = circumference - (levelRight / 100) * circumference;
+            rightCircle.setAttribute('stroke-dashoffset', offset);
+            rightCircle.setAttribute('stroke', getLevelColor(levelRight));
         }
     }
 
@@ -430,10 +436,16 @@ function initRadioStreamPlayer() {
                 });
                 break;
             case 'circular':
-                document.querySelectorAll('.circular-level').forEach(circle => {
-                    circle.setAttribute('stroke-dashoffset', '81.68');
-                    circle.setAttribute('stroke', '#00ff00');
-                });
+                const leftCircleReset = document.getElementById('left-circular-level');
+                const rightCircleReset = document.getElementById('right-circular-level');
+                if (leftCircleReset) {
+                    leftCircleReset.setAttribute('stroke-dashoffset', '81.68');
+                    leftCircleReset.setAttribute('stroke', '#00ff00');
+                }
+                if (rightCircleReset) {
+                    rightCircleReset.setAttribute('stroke-dashoffset', '81.68');
+                    rightCircleReset.setAttribute('stroke', '#00ff00');
+                }
                 break;
             case 'retro':
                 document.querySelectorAll('.retro-needle').forEach(needle => {
