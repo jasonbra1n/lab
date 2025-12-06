@@ -53,24 +53,6 @@ h2 {
     margin-bottom: 15px;
 }
 
-#dateInput {
-    padding: 10px;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    border: 1px solid var(--primary-color);
-    border-radius: 4px;
-    max-width: 300px;
-    margin: 0 auto;
-    display: block;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-#dateInput::-webkit-calendar-picker-indicator {
-    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(130deg) brightness(95%) contrast(80%);
-}
-
 header {
     text-align: center;
     padding: 0.5rem; /* Reduced from 1rem */
@@ -292,6 +274,18 @@ button:hover {
     background-color: var(--primary-hover);
 }
 
+/* Generic styles for all input types within a tool */
+.tool-content input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(130deg) brightness(95%) contrast(80%);
+}
+
+.dark-theme .tool-content input[type="date"]::-webkit-calendar-picker-indicator {
+    /* Adjust filter for dark mode to make the icon visible */
+    filter: invert(1);
+}
+
+
 /* Theme Toggle */
 #theme-toggle {
     position: fixed;
@@ -371,36 +365,25 @@ button:hover {
     .tool-nav {
         flex-direction: row; /* Keep pillars horizontal */
         justify-content: center; /* Center the pillars */
-        padding: 5px;
-        flex-wrap: nowrap; /* Prevent wrapping to keep on one line */
-        overflow-x: auto; /* Allow horizontal scrolling if needed */
+        flex-wrap: wrap; /* Allow pillars to wrap if they don't fit */
     }
     
     .pillar-btn {
         padding: 6px 12px; /* Reduced padding for mobile */
         font-size: 0.9rem;
     }
-    
+
+    /* On mobile, the tool list appears directly under its pillar button */
     .tool-list {
-        display: none; /* Hidden by default */
-        position: static; /* Stack below the entire tool-nav */
-        width: 100%; /* Full width for stacking */
-        padding: 5px; /* Reduce padding */
-        box-shadow: none;
-        border: 1px solid var(--border-color);
-        margin-top: 5px; /* Space between tool-nav and tool-list */
-    }
-    
-    .tool-list.active {
-        display: block; /* Show only when active */
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 180px; /* Give it a bit more space */
     }
     
     .tool-btn {
         width: 100%; /* Full width to stack naturally */
         padding: 6px 10px; /* Reduce padding for smaller screens */
         margin: 3px 0; /* Tighten spacing between buttons */
-        font-size: 0.85rem; /* Slightly smaller font for mobile */
         box-sizing: border-box; /* Ensure padding doesn’t overflow */
-        text-align: center; /* Center text for a cleaner look */
     }
 }
