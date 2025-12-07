@@ -4,16 +4,9 @@
 const ThemeManager = {
     init() {
         this.addThemeToggle();
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (savedTheme) {
-            document.documentElement.classList.add(savedTheme);
-        } else if (prefersDark) {
-            document.documentElement.classList.add('dark-theme');
-        }
+        // Initial theme is now set by an inline script in index.html to prevent FOUC.
+        // This init function just needs to ensure the icon is correct on load.
         this.updateThemeIcon();
-        this.dispatchThemeEvent();
     },
 
     toggleTheme() {
@@ -111,9 +104,14 @@ const ToolLoader = {
         if (document.querySelector(`script[src="${src}"]`)) return Promise.resolve();
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = src;
-            script.onload = () => resolve();
-            script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+            script.src = src; 
+            script.onload = () => resolve({ loaded: true, src });
+            // A 404 error on a script is not a critical failure, as some tools may not have one.
+            // We resolve with 'loaded: false' so the caller can decide how to proceed.
+            script.onerror = () => {
+                console.warn(`Optional script not found, loading skipped: ${src}`);
+                resolve({ loaded: false, src });
+            };
             document.body.appendChild(script);
         });
     },
@@ -163,7 +161,7 @@ const ToolLoader = {
             }
 
             // Load the tool's own script
-            await this.loadScript(`tools/${toolName}/script.js`);
+            await this.loadScript(`tools/${toolName}/script.js`); // This will now not throw an error if the script is missing
 
             console.log(`Loaded tool: ${toolName}`);
 
@@ -273,17 +271,11 @@ const App = {
     goHome() {
         // The welcomeMessageHTML is now guaranteed to be set during init.
         // We can always restore it directly without a page reload.
-        if (this.welcomeMessageHTML) {
-            ToolLoader.toolContainer.innerHTML = this.welcomeMessageHTML;
-            ToolLoader.currentTool = null;
-            this.updateActiveButton(null);
-            // Update URL to reflect home state without adding a new history entry
-            history.pushState("", document.title, window.location.pathname + window.location.search);
-        } else {
-            // This fallback should ideally not be reached anymore, but is safe to keep.
-            console.error("Home content was not initialized. Reloading page.");
-            window.location.href = window.location.pathname;
-        }
+        ToolLoader.toolContainer.innerHTML = this.welcomeMessageHTML;
+        ToolLoader.currentTool = null;
+        this.updateActiveButton(null);
+        // Update URL to reflect home state without adding a new history entry
+        history.pushState("", document.title, window.location.pathname + window.location.search);
     },
 
     updateActiveButton(toolName) {
