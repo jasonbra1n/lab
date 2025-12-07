@@ -11,6 +11,8 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 - **Tool Enhancement:**
   - [ ] Complete the `dj-audio-visualizer` tool.
   - [ ] Add more features to the `gematria-calculator` (e.g., different cipher options).
+- **Architecture:**
+  - [x] **Decouple Radio Stream Player:** Refactor the `radiostream-player` into its own repository and integrate it back into the SPA using an iframe. This serves as a pilot for modular, independent tool deployment.
 
 ## Next Up
 

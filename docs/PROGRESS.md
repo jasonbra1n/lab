@@ -24,3 +24,15 @@ This file tracks the major changes, features, and fixes implemented in the LAB D
 
 ### Changed
 - Updated `README.md` to accurately reflect the current toolset and new SPA architecture.
+
+---
+
+## [Phase 3] - Tool Decoupling & Architectural Evolution (In Progress)
+*This section will track the move towards a more modular, hybrid architecture where tools can be either locally integrated or externally hosted.*
+
+### Added
+- **Hybrid Tool Architecture:** Formalized a new iframe-based loading method for tools.
+  - `ToolLoader` now supports loading tools from an external URL into an `<iframe>` via a `data-tool-iframe` attribute on the navigation button.
+  - This allows for standalone tools with their own repositories and deployment cycles, preventing CSS/JS conflicts.
+- **Decoupled Radio Stream Player:** Refactored the `radiostream-player` to be the first standalone tool using the new iframe architecture.
+  - The player now lives in its own repository and is loaded from its external URL.

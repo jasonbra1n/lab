@@ -227,6 +227,19 @@ button:hover {
     gap: 15px;
 }
 
+/* Styles for iframe-based tools */
+.iframe-container {
+    padding: 0; /* Remove padding for seamless iframe */
+    overflow: hidden;
+}
+
+.iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+
 /* Added for Binaural Beats and other tools */
 .tool-content h1 {
     font-size: 2em;

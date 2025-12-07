@@ -21,18 +21,34 @@ This project is a **Single Page Application (SPA)** built with vanilla HTML, CSS
 
 ### The Tool Loading Lifecycle
 
-The application uses URL hash-based routing to load tools.
+---
 
-1.  A user clicks a tool button (e.g., "Magic 8 Ball").
-2.  The `App.handleNavClick` event handler updates the URL hash (`window.location.hash = 'magic-8-ball'`).
-3.  This triggers a `hashchange` event on the window.
-4.  The `App.handleInitialLoad` listener catches this event and calls `ToolLoader.loadTool('magic-8-ball')`.
-5.  `ToolLoader.loadTool` performs the following steps:
-    - Displays a loading message.
-    - Fetches the tool's `index.html`, `styles.css`, and any external dependencies (defined in `ToolLoader.dependencies`).
-    - Injects the tool's HTML and CSS into the main `tool-container`.
-    - Loads the tool's `script.js`.
-    - Dispatches a `toolLoaded` custom event to signal that the tool is ready.
+The application supports two methods for loading tools, determined by the `data-` attributes on the tool's navigation button in `index.html`.
+
+#### Method 1: Direct Injection (Default)
+This is the standard method for simple, tightly integrated tools.
+
+1.  A user clicks a tool button with a `data-tool="{tool-name}"` attribute.
+2.  The `App.handleNavClick` event handler updates the URL hash (`window.location.hash = 'tool-name'`).
+3.  The `hashchange` event triggers `ToolLoader.loadTool('tool-name')`.
+4.  `ToolLoader.loadTool` fetches the tool's local files (`/tools/{tool-name}/...`).
+5.  It injects the tool's HTML and CSS into the DOM and executes its script.
+6.  A `toolLoaded` custom event is dispatched to initialize the tool's script.
+
+#### Method 2: Iframe Embedding
+This method is ideal for complex tools, tools hosted externally, or those that require strong isolation from the main application.
+
+1.  A user clicks a tool button with a `data-tool-iframe="{url}"` attribute.
+2.  The `App.handleNavClick` event handler updates the URL hash.
+3.  The `hashchange` event triggers the `ToolLoader`.
+4.  The `ToolLoader` detects the `data-tool-iframe` attribute and, instead of fetching files, it creates an `<iframe>`.
+5.  The `iframe.src` is set to the provided URL.
+6.  The iframe is appended to the `<main id="console-container">`, completely isolating the tool's environment.
+
+**Benefits of Iframe Embedding:**
+- **Isolation:** CSS and JavaScript are sandboxed, preventing conflicts.
+- **Independent Deployment:** The tool can be developed and deployed from its own repository.
+- **Flexibility:** Allows integration of tools built with different technologies (e.g., React, Vue) without modifying the core SPA.
 
 ---
 
@@ -60,12 +76,21 @@ The project follows a consistent structure.
 
 ## How to Add a New Tool
 
+There are two ways to add a new tool, corresponding to the two loading methods. Choose the one that best fits your tool's complexity and architecture.
+
+### Method 1: Adding a Directly Injected Tool
+
+This is for simple tools integrated directly into the main repository.
+
 1.  **Create Directory**: Add a new folder inside `/tools/` with a descriptive, kebab-case name (e.g., `my-new-tool`).
 2.  **Create Files**: Inside the new folder, create `index.html`. Optionally, add `script.js` and `styles.css`.
     - The `index.html` should have a single root container element, like `<div class="container">...</div>`.
-3.  **Add to Navigation**: In the main `index.html`, add a new `<button class="tool-btn" data-tool="my-new-tool">...</button>` to the appropriate pillar.
+3.  **Add to Navigation**: In the main `index.html`, add a new `<button>` to the appropriate pillar. Use the `data-tool` attribute with your tool's folder name.
+    ```html
+    <button class="tool-btn" data-tool="my-new-tool">My New Tool</button>
+    ```
 4.  **Add Dependencies (if any)**: If your tool requires external libraries (like Tone.js or JSZip), add them to the `dependencies` object in `ToolLoader` inside `script.js`.
-5.  **Initialize Tool Script**: If your tool has a `script.js`, it should listen for the `toolLoaded` event to initialize itself. This ensures the DOM is ready.
+5.  **Initialize Tool Script**: If your tool has a `script.js`, it must listen for the `toolLoaded` event to initialize itself. This ensures the DOM is ready.
 
     ```javascript
     // In /tools/my-new-tool/script.js
@@ -75,3 +100,15 @@ The project follows a consistent structure.
         }
     });
     ```
+
+### Method 2: Adding a Standalone (Iframe) Tool
+
+This is for complex tools, or tools that live in their own repository (like the Radio Stream Player).
+
+1.  **Deploy Your Tool**: Ensure your tool is deployed and accessible via a URL.
+2.  **Add to Navigation**: In the main `index.html`, add a new `<button>` to the appropriate pillar. Use the `data-tool-iframe` attribute with the full URL to your tool.
+    ```html
+    <button class="tool-btn" data-tool-iframe="https://my-tool.example.com">My Iframe Tool</button>
+    ```
+
+That's it! The `ToolLoader` will handle creating the iframe and loading your tool when the button is clicked. No other changes to the core application are needed.

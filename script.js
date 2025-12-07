@@ -97,6 +97,23 @@ const ToolLoader = {
         if (!toolName || this.currentTool === toolName) return;
         this.currentTool = toolName;
 
+        // Special handling for the external Radio Stream Player
+        if (toolName === 'radiostream-player') {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'https://jasonbra1n.github.io/Radio-Stream-Player/';
+            iframe.title = 'Radio Stream Player';
+            iframe.allow = 'autoplay; encrypted-media';
+            iframe.className = 'tool-container'; // Let the iframe act as the tool container
+            this.toolContainer.innerHTML = ''; // Clear previous content
+            this.toolContainer.appendChild(iframe);
+
+            console.log(`Loaded external tool in iframe: ${toolName}`);
+            const event = new CustomEvent('toolLoaded', { detail: { tool: toolName } });
+            document.dispatchEvent(event);
+            return; // Exit the function to prevent trying to load local files
+        }
+
+        // The rest of the function handles locally stored tools
         try {
             this.toolContainer.innerHTML = '<div class="loading">Loading tool...</div>';
 
