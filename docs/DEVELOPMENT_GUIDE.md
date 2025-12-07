@@ -39,11 +39,12 @@ This is the standard method for simple, tightly integrated tools.
 This method is ideal for complex tools, tools hosted externally, or those that require strong isolation from the main application.
 
 1.  A user clicks a tool button with a `data-tool-iframe="{url}"` attribute.
-2.  The `App.handleNavClick` event handler updates the URL hash.
-3.  The `hashchange` event triggers the `ToolLoader`.
-4.  The `ToolLoader` detects the `data-tool-iframe` attribute and, instead of fetching files, it creates an `<iframe>`.
-5.  The `iframe.src` is set to the provided URL.
-6.  The iframe is appended to the `<main id="console-container">`, completely isolating the tool's environment.
+2.  The `App.handleNavClick` event handler uses the `data-tool` value to update the URL hash (`window.location.hash = 'tool-name'`).
+3.  The `hashchange` event triggers `ToolLoader.loadTool('tool-name')`.
+4.  `ToolLoader.loadTool` finds the button using the `tool-name`.
+5.  It then reads the `data-tool-iframe` attribute from that button and creates an `<iframe>`.
+6.  The `iframe.src` is set to the provided URL.
+7.  The iframe is appended to the `<main id="console-container">`, completely isolating the tool's environment.
 
 **Benefits of Iframe Embedding:**
 - **Isolation:** CSS and JavaScript are sandboxed, preventing conflicts.
@@ -88,6 +89,7 @@ This is for simple tools integrated directly into the main repository.
 3.  **Add to Navigation**: In the main `index.html`, add a new `<button>` to the appropriate pillar. Use the `data-tool` attribute with your tool's folder name.
     ```html
     <button class="tool-btn" data-tool="my-new-tool">My New Tool</button>
+    <!-- The value of data-tool must exactly match the folder name inside /tools/ -->
     ```
 4.  **Add Dependencies (if any)**: If your tool requires external libraries (like Tone.js or JSZip), add them to the `dependencies` object in `ToolLoader` inside `script.js`.
 5.  **Initialize Tool Script**: If your tool has a `script.js`, it must listen for the `toolLoaded` event to initialize itself. This ensures the DOM is ready.
@@ -107,8 +109,9 @@ This is for complex tools, or tools that live in their own repository (like the 
 
 1.  **Deploy Your Tool**: Ensure your tool is deployed and accessible via a URL.
 2.  **Add to Navigation**: In the main `index.html`, add a new `<button>` to the appropriate pillar. Use the `data-tool-iframe` attribute with the full URL to your tool.
+    - **Important**: Also include a `data-tool` attribute with a unique name. This is used for URL hashing and routing.
     ```html
-    <button class="tool-btn" data-tool-iframe="https://my-tool.example.com">My Iframe Tool</button>
+    <button class="tool-btn" data-tool="my-iframe-tool" data-tool-iframe="https://my-tool.example.com">My Iframe Tool</button>
     ```
 
 That's it! The `ToolLoader` will handle creating the iframe and loading your tool when the button is clicked. No other changes to the core application are needed.

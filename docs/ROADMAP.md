@@ -1,28 +1,25 @@
 # Project Roadmap
 
-This document outlines the development roadmap for the LAB Digital Workshop. It's a living document that will evolve as the project grows.
+This document outlines the development roadmap for the LAB Digital Workshop. It's a living document that will evolve as the project grows. Last updated: Dec 7, 2025.
 
-## Current Focus (Q3 2024)
+---
 
-- **UI/UX Refinement:**
+## Current Focus (Q4 2025 / Q1 2026)
+
+- **New "About" Page:**
+  - [x] Create a dedicated "About" page that loads like a tool, explaining the project's mission.
+- **UI/UX & Tool Refinement:**
   - [ ] Implement a CSS-only loading animation to replace the "Loading tool..." text.
-  - [ ] Improve the mobile navigation menu's user experience.
   - [ ] Ensure all tools are fully responsive and accessible.
-- **Tool Enhancement:**
   - [ ] Complete the `dj-audio-visualizer` tool.
   - [ ] Add more features to the `gematria-calculator` (e.g., different cipher options).
-- **Architecture:**
-  - [x] **Decouple Radio Stream Player:** Refactor the `radiostream-player` into its own repository and integrate it back into the SPA using an iframe. This serves as a pilot for modular, independent tool deployment.
 
 ## Next Up
 
-- **New "About" Page:**
-  - [ ] Create a dedicated "About" page that loads like a tool, explaining the project's mission.
 - **New Tools:**
   - [ ] **Retreat 🌿:** A guided breathing exercise tool.
   - [ ] **Work 🔧:** A JSON formatter/validator.
   - [ ] **Play 🎮:** A simple typing speed test game.
-  - [x] **Play 🎮:** Added Denon CD Player Emulator (via iframe).
 
 ## Future Ideas (Backlog)
 
@@ -30,3 +27,11 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 - **Internationalization (i18n):** Add support for multiple languages.
 - **PWA Conversion:** Make the SPA a fully installable Progressive Web App for offline access.
 - **API Integration:** Create a tool that fetches and displays data from a public API (e.g., weather, stock prices).
+
+---
+
+## Recently Completed
+
+- **Architecture:** Decoupled the `radiostream-player` into its own repository and integrated it via iframe.
+- **New Tool:** Added the "Denon CD Player" emulator via iframe.
+- **UI/UX:** Improved the mobile navigation menu's behavior.

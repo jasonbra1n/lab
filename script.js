@@ -79,29 +79,19 @@ const ToolLoader = {
         this.toolContainer = document.getElementById('tool-container');
     },
 
-    async loadScript(src) {
-        // Avoid reloading a script that's already present
-        if (document.querySelector(`script[src="${src}"]`)) {
-            return Promise.resolve();
-        }
-        return new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = src;
-            script.onload = resolve;
-            script.onerror = reject;
-            document.body.appendChild(script);
-        });
-    },
-
     async loadTool(toolName) {
         if (!toolName || this.currentTool === toolName) return;
         this.currentTool = toolName;
 
-        // Special handling for the external Radio Stream Player
-        if (toolName === 'radiostream-player') {
+        // Find the button that corresponds to the toolName to check for an iframe URL
+        const toolButton = document.querySelector(`.tool-btn[data-tool="${toolName}"]`);
+        const iframeSrc = toolButton ? toolButton.dataset.toolIframe : null;
+
+        if (iframeSrc) {
+            // Generic handling for any tool that needs an iframe
             const iframe = document.createElement('iframe');
-            iframe.src = 'https://jasonbra1n.github.io/Radio-Stream-Player/';
-            iframe.title = 'Radio Stream Player';
+            iframe.src = iframeSrc;
+            iframe.title = toolButton.textContent || toolName; // Use button text for the title
             iframe.allow = 'autoplay; encrypted-media';
             iframe.className = 'tool-container'; // Let the iframe act as the tool container
             this.toolContainer.innerHTML = ''; // Clear previous content
@@ -112,8 +102,23 @@ const ToolLoader = {
             document.dispatchEvent(event);
             return; // Exit the function to prevent trying to load local files
         }
-
+        
         // The rest of the function handles locally stored tools
+        this.loadLocalTool(toolName);
+    },
+
+    async loadScript(src) {
+        if (document.querySelector(`script[src="${src}"]`)) return Promise.resolve();
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+            document.body.appendChild(script);
+        });
+    },
+
+    async loadLocalTool(toolName) {
         try {
             this.toolContainer.innerHTML = '<div class="loading">Loading tool...</div>';
 
@@ -188,6 +193,7 @@ const App = {
         this.copyrightYearEl = document.getElementById('copyright-year');
         this.toolNav = document.querySelector('.tool-nav');
         this.homeBtn = document.getElementById('home-btn');
+        // Capture the initial state of the tool container as the "home" content.
         this.welcomeMessageHTML = document.getElementById('tool-container').innerHTML;
 
         ThemeManager.init();
@@ -237,7 +243,14 @@ const App = {
 
         if (toolBtn) {
             const toolName = toolBtn.dataset.tool;
-            window.location.hash = toolName; // This will trigger the 'hashchange' event and load the tool
+            const iframeUrl = toolBtn.dataset.toolIframe;
+
+            if (toolName) {
+                window.location.hash = toolName; // This will trigger the 'hashchange' event and load the tool
+            } else if (iframeUrl) {
+                // Fallback for buttons that might only have an iframe URL (though not recommended)
+                this.loadToolWithIframe(iframeUrl, toolBtn.textContent);
+            }
         }
     },
 
@@ -251,16 +264,26 @@ const App = {
                 page_path: `/#${toolName}`
             });
         } else {
-            this.goHome();
+            // On initial load to the home page, do nothing. The content is already there.
+            // We just need to ensure no tool button is marked as active.
+            this.updateActiveButton(null);
         }
     },
 
     goHome() {
-        ToolLoader.toolContainer.innerHTML = this.welcomeMessageHTML;
-        ToolLoader.currentTool = null;
-        this.updateActiveButton(null);
-        // Update URL to reflect home state without adding a new history entry
-        history.pushState("", document.title, window.location.pathname + window.location.search);
+        // The welcomeMessageHTML is now guaranteed to be set during init.
+        // We can always restore it directly without a page reload.
+        if (this.welcomeMessageHTML) {
+            ToolLoader.toolContainer.innerHTML = this.welcomeMessageHTML;
+            ToolLoader.currentTool = null;
+            this.updateActiveButton(null);
+            // Update URL to reflect home state without adding a new history entry
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+        } else {
+            // This fallback should ideally not be reached anymore, but is safe to keep.
+            console.error("Home content was not initialized. Reloading page.");
+            window.location.href = window.location.pathname;
+        }
     },
 
     updateActiveButton(toolName) {

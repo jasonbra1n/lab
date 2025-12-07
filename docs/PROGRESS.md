@@ -39,3 +39,10 @@ This file tracks the major changes, features, and fixes implemented in the LAB D
 ### Added
 - **New Tool (Play):** Added the "Denon CD Player" emulator.
   - This tool is integrated via the iframe-embedding method, loading from an external GitHub Pages URL.
+
+---
+
+## [Phase 4] - Content & UX Polish (In Progress)
+
+### Added
+- **New "About" Page:** Created a new directly-injected tool, `about-page`, to provide information about the project's mission and architecture.
