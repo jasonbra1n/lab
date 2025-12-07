@@ -7,31 +7,35 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
 - **Modular Toolset:** Tools are organized into four pillars:
   - **Factory (Work 🔧):** Productivity-focused utilities.
   - **Classroom (Learn 📚):** Educational and insightful calculators.
-  - **Retreat (Rest 🌿):** Relaxing tools (coming soon).
+  - **Retreat (Rest 🌿):** Tools for relaxation and mindfulness.
   - **Arcade (Play 🎮):** Fun, interactive experiences.
 - **Responsive Design:** Works seamlessly on desktop and mobile.
 - **Theme Support:** Switch between light and dark modes with a single click.
+- **SPA Architecture:** Dynamically loads tools without page reloads, using URL hash-based routing.
 - **Analytics:** Tracks usage via Google Analytics and AdSense integration.
 
 ## Current Tools
 
-### Factory: Work Tools
+### Factory: Work Tools 🔧
 - **Image to WebP Converter:** Convert images to WebP format with drag-and-drop support and ZIP download.
-- **Year Progress Calculator:** Visualize your year’s progress with a dynamic chart.
-- **Days Between Dates:** Calculate the number of days between two dates, with an option to include the end date.
 - **Math Calculator:** Perform basic arithmetic operations with history and clipboard support.
 - **DJ Audio Visualizer:** Create audio visualizations (in development).
+- **Subwoofer Enclosure Design:** Calculate subwoofer box designs.
 
-### Classroom: Learn Tools
+### Classroom: Learn Tools 📚
 - **Life Path Calculator:** Compute your numerology-based life path number and personality traits.
 - **Gematria Calculator:** Calculate gematria values for words using multiple systems, with customizable options and reduced value display.
+- **Moon Phase:** View the current phase of the moon.
+- **Days Between Dates:** Calculate the number of days between two dates.
+- **Year Progress:** Visualize your year’s progress with a dynamic chart.
 
-### Retreat: Rest Tools
-- *Coming soon...*
+### Retreat: Rest Tools 🌿
+- **Binaural Beats:** Generate binaural beats for focus or relaxation.
 
-### Arcade: Play Tools
-- **DJ Audio Visualizer:** Create audio visualizations (in development).
+### Arcade: Play Tools 🎮
+- **Magic 8 Ball:** Get answers to your questions from the digital oracle.
 - **Radio Stream Player:** Stream your favorite radio stations, including ETN-FM, Psyndora Psytrance, Proton Radio (Melodic House), and PsyStation Progressive Psytrance, with play/pause and volume controls.
+- **Memory Game:** A classic card-matching memory game.
 
 ## Getting Started
 
@@ -58,6 +62,13 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
   2. Enable GitHub Pages in Settings > Pages, selecting the `main` branch and `/` (root).
 
 ## Contributing
+This project is designed to be AI-friendly. For guidelines on development, future plans, and the project's progress, please see the documents in the `/docs` folder:
+
+- **`DEVELOPMENT_GUIDE.md`:** The primary technical guide explaining the architecture and how to contribute.
+- **`ROADMAP.md`:** Outlines the future direction and planned features.
+- **`PROGRESS.md`:** A changelog tracking new features and fixes.
+
+---
 
 Contributions are welcome! Whether it’s adding new tools, fixing bugs, or enhancing the UI:
 1. Fork the repository.
