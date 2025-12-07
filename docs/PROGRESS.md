@@ -36,3 +36,6 @@ This file tracks the major changes, features, and fixes implemented in the LAB D
   - This allows for standalone tools with their own repositories and deployment cycles, preventing CSS/JS conflicts.
 - **Decoupled Radio Stream Player:** Refactored the `radiostream-player` to be the first standalone tool using the new iframe architecture.
   - The player now lives in its own repository and is loaded from its external URL.
+### Added
+- **New Tool (Play):** Added the "Denon CD Player" emulator.
+  - This tool is integrated via the iframe-embedding method, loading from an external GitHub Pages URL.

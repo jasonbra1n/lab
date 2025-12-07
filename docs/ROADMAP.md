@@ -22,6 +22,7 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
   - [ ] **Retreat 🌿:** A guided breathing exercise tool.
   - [ ] **Work 🔧:** A JSON formatter/validator.
   - [ ] **Play 🎮:** A simple typing speed test game.
+  - [x] **Play 🎮:** Added Denon CD Player Emulator (via iframe).
 
 ## Future Ideas (Backlog)
 
