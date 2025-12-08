@@ -9,6 +9,7 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
   - **Classroom (Learn 📚):** Educational and insightful calculators.
   - **Retreat (Rest 🌿):** Tools for relaxation and mindfulness.
   - **Arcade (Play 🎮):** Fun, interactive experiences.
+  - **Info (Info 🧠):** Project information and external links.
 - **Responsive Design:** Works seamlessly on desktop and mobile.
 - **Theme Support:** Switch between light and dark modes with a single click.
 - **SPA Architecture:** Dynamically loads tools without page reloads, using URL hash-based routing.
@@ -19,13 +20,13 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
 ### Factory: Work Tools 🔧
 - **Image to WebP Converter:** Convert images to WebP format with drag-and-drop support and ZIP download.
 - **Math Calculator:** Perform basic arithmetic operations with history and clipboard support.
-- **DJ Audio Visualizer:** Create audio visualizations (in development).
+- **Audio Visualizer:** Create audio visualizations.
 - **Subwoofer Enclosure Design:** Calculate subwoofer box designs.
 
 ### Classroom: Learn Tools 📚
 - **Life Path Calculator:** Compute your numerology-based life path number and personality traits.
 - **Gematria Calculator:** Calculate gematria values for words using multiple systems, with customizable options and reduced value display.
-- **Moon Phase:** View the current phase of the moon.
+- **Astronomy:** View the current phase of the moon and other astronomical data.
 - **Days Between Dates:** Calculate the number of days between two dates.
 - **Year Progress:** Visualize your year’s progress with a dynamic chart.
 
@@ -33,9 +34,14 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
 - **Binaural Beats:** Generate binaural beats for focus or relaxation.
 
 ### Arcade: Play Tools 🎮
-- **Magic 8 Ball:** Get answers to your questions from the digital oracle.
 - **Radio Stream Player:** Stream your favorite radio stations, including ETN-FM, Psyndora Psytrance, Proton Radio (Melodic House), and PsyStation Progressive Psytrance, with play/pause and volume controls.
-- **Memory Game:** A classic card-matching memory game.
+- **Magic 8 Ball:** Get answers to your questions from the digital oracle.
+- **Memory Master:** A classic card-matching memory game.
+- **Denon CD Player:** An emulator for the classic Denon DN-1000F CD player.
+
+### Info: Project & Links 🧠
+- **About This Project:** Learn about the project's mission, architecture, and development.
+- **Links:** A curated list of personal and professional links.
 
 ## Getting Started
 
