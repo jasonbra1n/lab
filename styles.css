@@ -400,3 +400,41 @@ button:hover {
         box-sizing: border-box; /* Ensure padding doesn’t overflow */
     }
 }
+
+/* =========================================
+   Links Tool Styles
+   ========================================= */
+.links-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.links-container li {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.links-container li:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.links-container a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.links-container a:hover,
+.links-container a:focus {
+    text-decoration: underline;
+    color: var(--primary-hover);
+}
+
+.links-container p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}

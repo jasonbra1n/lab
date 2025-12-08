@@ -1,13 +1,10 @@
 # Project Roadmap
 
-This document outlines the development roadmap for the LAB Digital Workshop. It's a living document that will evolve as the project grows. Last updated: Dec 7, 2025.
+This document outlines the development roadmap for the LAB Digital Workshop. It's a living document that will evolve as the project grows.
 
 ---
 
 ## Current Focus (Q4 2025 / Q1 2026)
-
-- **New "About" Page:**
-  - [x] Create a dedicated "About" page that loads like a tool, explaining the project's mission.
 - **UI/UX & Tool Refinement:**
   - [ ] Implement a CSS-only loading animation to replace the "Loading tool..." text.
   - [ ] Ensure all tools are fully responsive and accessible.
@@ -31,6 +28,8 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 
 ## Recently Completed
 
+- **New Page:** Added the "About This Project" page.
+- **New Page:** Added the "Links" page with custom styling.
 - **Architecture:** Decoupled the `memory-game` into its own repository ("Memory Master") and integrated it via iframe.
 - **Architecture:** Decoupled the `gematria-calculator` into its own repository and integrated it via iframe.
 - **Architecture:** Decoupled the `radiostream-player` into its own repository and integrated it via iframe.

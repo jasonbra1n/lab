@@ -50,3 +50,7 @@ This file tracks the major changes, features, and fixes implemented in the LAB D
 
 ### Added
 - **New "About" Page:** Created a new directly-injected tool, `about-page`, to provide information about the project's mission and architecture.
+- **New "Links" Page:**
+  - Added a new directly-injected tool, `tools/links/`, to provide a curated list of personal and professional links.
+  - Integrated the page into the "Info" pillar of the main navigation.
+  - Added custom styles in `styles.css` to ensure consistent theming and layout.
