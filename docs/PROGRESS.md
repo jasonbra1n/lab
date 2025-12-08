@@ -41,6 +41,7 @@ This file tracks the major changes, features, and fixes implemented in the LAB D
     - **Decoupled Memory Master Game:** Refactored the `memory-game` into its own repository ("Memory Master"). It is now loaded via an iframe.
     - **Decoupled Year Progress Calculator:** Refactored the `year-progress-calculator` into its own repository. It is now loaded via an iframe, separating its development from the main SPA.
     - **Decoupled Subwoofer Enclosure Design Tool:** Refactored the `subwoofer-enclosure-design` tool into its own repository. It is now loaded via an iframe.
+    - **Decoupled WebP Converter:** Refactored the `image-to-webp-converter` into its own repository. It is now loaded via an iframe.
 
 ### Added
 - **New Tool (Play):** Added the "Denon CD Player" emulator.
