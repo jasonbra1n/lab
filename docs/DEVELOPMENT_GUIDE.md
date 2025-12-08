@@ -2,7 +2,7 @@
 
 Welcome to the development guide for the LAB Digital Workshop. This document serves as the primary technical overview for developers and AI assistants to understand the project's architecture, conventions, and contribution workflow.
 
-**To get started on a task, review this guide first, then check `ROADMAP.md` for what to do next and `PROGRESS.md` for what has already been done.**
+**To get started on a task, review this guide first, then check `ROADMAP.md` for what to do next and `CHANGELOG.md` for what has already been done.**
 
 ---
 

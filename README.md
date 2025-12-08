@@ -66,7 +66,7 @@ This project is designed to be AI-friendly. For guidelines on development, futur
 
 - **`DEVELOPMENT_GUIDE.md`:** The primary technical guide explaining the architecture and how to contribute.
 - **`ROADMAP.md`:** Outlines the future direction and planned features.
-- **`PROGRESS.md`:** A changelog tracking new features and fixes.
+- **`CHANGELOG.md`:** A log of all notable changes, features, and fixes.
 
 ---
 

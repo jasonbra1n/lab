@@ -57,6 +57,7 @@ header {
     text-align: center;
     padding: 0.5rem; /* Reduced from 1rem */
     border-bottom: 1px solid var(--border-color);
+    position: relative; /* Needed for hamburger menu positioning */
     min-height: var(--header-height);
     box-sizing: border-box;
 }
@@ -227,6 +228,22 @@ button:hover {
     gap: 15px;
 }
 
+/* CSS Loader Animation */
+.loader {
+    border: 5px solid var(--card-bg); /* Light grey border */
+    border-top: 5px solid var(--primary-color); /* Blue color for the spinner part */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: auto; /* Center the loader in the flex container */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* Styles for iframe-based tools */
 .iframe-container {
     padding: 0; /* Remove padding for seamless iframe */
@@ -318,6 +335,21 @@ button:hover {
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
+/* Hamburger Menu Button */
+#hamburger-btn {
+    display: none; /* Hidden on desktop */
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 1002; /* Above nav, below open menu */
+    padding: 0 10px;
+}
+
 /* Mobile Styles */
 @media (max-width: 768px) {
     :root {
@@ -325,8 +357,73 @@ button:hover {
     }
     
     .tool-nav {
-        padding: 3px;
+        display: none; /* Hide pillar nav on mobile */
     }
+
+    #main-nav {
+        display: none; /* Hide nav wrapper by default on mobile */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg-color);
+        z-index: 1001;
+        overflow-y: auto;
+        padding-top: 60px; /* Space for header/close button */
+    }
+
+    #main-nav.menu-open {
+        display: block; /* Show the menu when open */
+    }
+
+    #main-nav .tool-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch; /* Stretch items to full width */
+        gap: 0.5rem; /* Reduced gap between pillars */
+        padding: 2rem 0;
+    }
+
+    #main-nav .pillar {
+        position: static; /* Override desktop absolute positioning context */
+    }
+
+    #main-nav .tool-list {
+        position: static; /* No longer a dropdown */
+        display: flex; /* Use flex to layout tool buttons */
+        flex-direction: column;
+        box-shadow: none;
+        background: none;
+        padding: 5px 0 0 20px; /* Reduced top padding and indent tool buttons */
+    }
+
+    /* Restyle pillar and tool buttons for the mobile menu */
+    #main-nav .pillar-btn,
+    #main-nav .tool-btn {
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: center;
+        border-radius: 0;
+    }
+
+    #main-nav .pillar-btn {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 0.25rem 0; /* Reduced padding */
+    }
+
+    #main-nav .tool-btn {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: normal;
+        padding: 0.25rem 0; /* Reduced padding */
+        opacity: 0.9;
+    }
+
+    #hamburger-btn { display: block; } /* Show hamburger on mobile */
     
     #console-container {
         padding: 15px;
@@ -375,30 +472,6 @@ button:hover {
         padding: 15px;
     }
     
-    .tool-nav {
-        flex-direction: row; /* Keep pillars horizontal */
-        justify-content: center; /* Center the pillars */
-        flex-wrap: wrap; /* Allow pillars to wrap if they don't fit */
-    }
-    
-    .pillar-btn {
-        padding: 6px 12px; /* Reduced padding for mobile */
-        font-size: 0.9rem;
-    }
-
-    /* On mobile, the tool list appears directly under its pillar button */
-    .tool-list {
-        left: 50%;
-        transform: translateX(-50%);
-        min-width: 180px; /* Give it a bit more space */
-    }
-    
-    .tool-btn {
-        width: 100%; /* Full width to stack naturally */
-        padding: 6px 10px; /* Reduce padding for smaller screens */
-        margin: 3px 0; /* Tighten spacing between buttons */
-        box-sizing: border-box; /* Ensure padding doesn’t overflow */
-    }
 }
 
 /* =========================================

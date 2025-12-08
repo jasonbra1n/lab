@@ -118,7 +118,7 @@ const ToolLoader = {
 
     async loadLocalTool(toolName) {
         try {
-            this.toolContainer.innerHTML = '<div class="loading">Loading tool...</div>';
+            this.toolContainer.innerHTML = '<div class="loader"></div>'; // Placeholder for CSS loader
 
             // Fetch HTML and CSS concurrently
             const [htmlResponse, cssResponse] = await Promise.all([
@@ -191,6 +191,9 @@ const App = {
         this.copyrightYearEl = document.getElementById('copyright-year');
         this.toolNav = document.querySelector('.tool-nav');
         this.homeBtn = document.getElementById('home-btn');
+        this.hamburgerBtn = document.getElementById('hamburger-btn');
+        this.mainNav = document.getElementById('main-nav');
+
         // Capture the initial state of the tool container as the "home" content.
         this.welcomeMessageHTML = document.getElementById('tool-container').innerHTML;
 
@@ -210,6 +213,9 @@ const App = {
     addEventListeners() {
         // Use event delegation for all nav clicks
         this.toolNav.addEventListener('click', this.handleNavClick.bind(this));
+
+        // Add listener for the hamburger menu button
+        this.hamburgerBtn.addEventListener('click', this.toggleMobileMenu.bind(this));
 
         // Handle clicks outside the pillar menus to close them
         document.addEventListener('click', (e) => {
@@ -249,6 +255,9 @@ const App = {
                 // Fallback for buttons that might only have an iframe URL (though not recommended)
                 this.loadToolWithIframe(iframeUrl, toolBtn.textContent);
             }
+
+            // Close the mobile menu if it's open
+            this.closeMobileMenu();
         }
     },
 
@@ -276,6 +285,9 @@ const App = {
         this.updateActiveButton(null);
         // Update URL to reflect home state without adding a new history entry
         history.pushState("", document.title, window.location.pathname + window.location.search);
+
+        // Close the mobile menu if it's open
+        this.closeMobileMenu();
     },
 
     updateActiveButton(toolName) {
@@ -284,6 +296,23 @@ const App = {
         });
         // Close any open pillar menus
         document.querySelectorAll('.tool-list.active').forEach(list => list.classList.remove('active'));
+    }
+    ,
+
+    toggleMobileMenu() {
+        const isOpen = this.mainNav.classList.toggle('menu-open');
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+        this.hamburgerBtn.innerHTML = isOpen ? '✕' : '☰';
+        this.hamburgerBtn.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+    },
+
+    closeMobileMenu() {
+        if (this.mainNav.classList.contains('menu-open')) {
+            this.mainNav.classList.remove('menu-open');
+            document.body.style.overflow = '';
+            this.hamburgerBtn.innerHTML = '☰';
+            this.hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
+        }
     }
 };
 
