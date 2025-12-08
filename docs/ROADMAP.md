@@ -12,7 +12,6 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
   - [ ] Implement a CSS-only loading animation to replace the "Loading tool..." text.
   - [ ] Ensure all tools are fully responsive and accessible.
   - [ ] Complete the `dj-audio-visualizer` tool.
-  - [ ] Add more features to the `gematria-calculator` (e.g., different cipher options).
 
 ## Next Up
 
@@ -32,6 +31,7 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 
 ## Recently Completed
 
+- **Architecture:** Decoupled the `gematria-calculator` into its own repository and integrated it via iframe.
 - **Architecture:** Decoupled the `radiostream-player` into its own repository and integrated it via iframe.
 - **New Tool:** Added the "Denon CD Player" emulator via iframe.
 - **UI/UX:** Improved the mobile navigation menu's behavior.
