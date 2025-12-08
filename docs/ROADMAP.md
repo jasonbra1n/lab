@@ -31,6 +31,7 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 
 ## Recently Completed
 
+- **Architecture:** Decoupled and renamed the `moon-phase` tool into the new `astronomy` tool, integrated via iframe.
 - **Architecture:** Decoupled the `gematria-calculator` into its own repository and integrated it via iframe.
 - **Architecture:** Decoupled the `radiostream-player` into its own repository and integrated it via iframe.
 - **New Tool:** Added the "Denon CD Player" emulator via iframe.
