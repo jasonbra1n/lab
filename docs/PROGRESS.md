@@ -38,7 +38,7 @@ This file tracks the major changes, features, and fixes implemented in the LAB D
   - The player now lives in its own repository and is loaded from its external URL.
     - **Decoupled Gematria Calculator:** Refactored the `gematria-calculator` into its own repository. It is now loaded via an iframe, separating its development from the main SPA.
 
-    - **Decoupled Astronomy Tool:** Renamed and refactored the `moon-phase` tool into its own repository as "Astronomy". It is now loaded via an iframe.
+    - **Decoupled Memory Master Game:** Refactored the `memory-game` into its own repository ("Memory Master"). It is now loaded via an iframe.
 
 ### Added
 - **New Tool (Play):** Added the "Denon CD Player" emulator.
