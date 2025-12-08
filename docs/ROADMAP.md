@@ -29,6 +29,7 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 ## Recently Completed
 
 - **New Page:** Added the "About This Project" page.
+- **Architecture:** Decoupled the `year-progress-calculator` into its own repository and integrated it via iframe.
 - **New Page:** Added the "Links" page with custom styling.
 - **Architecture:** Decoupled the `memory-game` into its own repository ("Memory Master") and integrated it via iframe.
 - **Architecture:** Decoupled the `gematria-calculator` into its own repository and integrated it via iframe.
