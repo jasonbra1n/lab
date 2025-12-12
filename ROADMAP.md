@@ -6,6 +6,22 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 
 ## Current Focus (Q4 2025 / Q1 2026) - Main Application
 - **UI/UX & Tool Refinement:**
+  - [ ] **Iframe Tools Microphone Access:**
+    - [ ] Investigate and implement a workaround for microphone access issues in iframe tools (e.g., Cymascope, Audio Visualizer).
+    - **Plan:**
+      - [ ] Add `microphone` to the `allow` attribute of relevant iframes in `ToolLoader.js`.
+      - [ ] Create a centralized function in the main `App` or a new `PermissionsManager` to request `getUserMedia` access when a mic-requiring tool is loaded.
+      - [ ] Implement a `postMessage` communication channel where the iframe can request the parent to initiate the microphone permission prompt.
+      - [ ] Test in various browsers (Brave, Chrome, Firefox) to confirm the solution is robust.
+
+  - [ ] **Iframe Tools Theme Switching Audit:**
+    - [ ] Audit all iframe tools to ensure proper theme switching.
+    - **Plan:**
+      - [ ] Create a markdown checklist of all tools loaded via iframe (from `index.html`).
+      - [ ] For each tool, manually test theme switching by toggling the theme in the main app.
+      - [ ] Document any tools that fail to switch themes correctly.
+      - [ ] Update the `styling_guide.md` and the failing tool's code to correctly implement the `message` event listener for theme changes.
+
   - [ ] **Responsiveness & Accessibility Audit (Local Tools):**
     - [ ] `about-page` (Local)
     - [ ] `binaural-beats` (Local)
@@ -13,6 +29,20 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
     - [ ] `life-path-calculator` (Local)
     - [ ] `links` (Local)
     - [ ] `math-calculator` (Local)
+      
+  - [ ] **Life Path Calculator Improvements:**
+    - [ ] Improve date picker and overall UI/UX of the Life Path Calculator.
+    - **Plan:**
+      - [ ] Replace the default `<input type="date">` with a more user-friendly, custom, or library-based date picker that is styleable and mobile-friendly.
+      - [ ] Review the layout and presentation of results for clarity and visual appeal.
+      - [ ] Ensure all interactive elements are accessible and have proper focus states.
+
+  - [ ] **Local Tool Headers & Info Sections:**
+    - [ ] Add a consistent header to each local tool (excluding "Info" pillar tools) with its title and an "About" button.
+    - **Plan:**
+      - [ ] Modify `ToolLoader.js` in `loadLocalTool` to dynamically prepend a header element to the tool's content.
+      - [ ] The header will contain the tool's title (derived from the button text) and an "About this tool" button.
+      - [ ] Clicking the "About" button will reveal/scroll to a new section within the tool's HTML, containing a brief description of its purpose and usage.
 
 > **Note:** Audits for standalone (iframed) tools are managed within their individual repositories. See the `README.md` for a list of tools and their sources.
 
@@ -31,6 +61,7 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 - **API Integration:** Create a tool that fetches and displays data from a public API (e.g., weather, stock prices).
 
 ---
+- **Documentation Overhaul:** Completed documentation overhaul for project management (Package 1.0.1).
 
 ## Recently Completed
 

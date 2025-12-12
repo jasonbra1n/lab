@@ -89,7 +89,8 @@ This is for simple tools integrated directly into the main repository.
 
 1.  **Create Directory**: Add a new folder inside `/tools/` with a descriptive, kebab-case name (e.g., `my-new-tool`).
 2.  **Create Files**: Inside the new folder, create `index.html`. Optionally, add `script.js` and `styles.css`.
-    - The `index.html` should have a single root container element, like `<div class="container">...</div>`.
+    - The `index.html` should have a single root container element, like `<div class="container">...</div>`. The `ToolLoader` will extract the content from this container.
+    - **Note on Headers**: The application will automatically prepend a standard header to your tool's content. This header includes the tool's title and an "About" button. You do not need to add this header yourself. If your tool requires an "About" section, create an element with `id="tool-about-section"` within your `index.html`.
 3.  **Add to Navigation**: In the main `index.html`, add a new `<button>` to the appropriate pillar. Use the `data-tool` attribute with your tool's folder name.
     ```html
     <button class="tool-btn" data-tool="my-new-tool">My New Tool</button>
