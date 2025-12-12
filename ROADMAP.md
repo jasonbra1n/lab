@@ -4,25 +4,17 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 
 ---
 
-## Current Focus (Q4 2025 / Q1 2026)
+## Current Focus (Q4 2025 / Q1 2026) - Main Application
 - **UI/UX & Tool Refinement:**
-  - [ ] **Responsiveness & Accessibility Audit:**
-    - [ ] `image-to-webp-converter`
-    - [ ] `math-calculator`
-    - [ ] `audio-visualizer`
-    - [ ] `subwoofer-enclosure-design`
-    - [ ] `life-path-calculator`
-    - [ ] `gematria-calculator`
-    - [ ] `astronomy`
-    - [ ] `days-between-dates`
-    - [ ] `year-progress-calculator`
-    - [ ] `binaural-beats`
-    - [ ] `radiostream-player`
-    - [ ] `magic-8-ball`
-    - [ ] `memory-master-game`
-    - [ ] `denon-cd-player`
-    - [ ] `about-page`
-    - [ ] `links`
+  - [ ] **Responsiveness & Accessibility Audit (Local Tools):**
+    - [ ] `about-page` (Local)
+    - [ ] `binaural-beats` (Local)
+    - [ ] `days-between-dates` (Local)
+    - [ ] `life-path-calculator` (Local)
+    - [ ] `links` (Local)
+    - [ ] `math-calculator` (Local)
+
+> **Note:** Audits for standalone (iframed) tools are managed within their individual repositories. See the `README.md` for a list of tools and their sources.
 
 ## Next Up
 
@@ -53,3 +45,4 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 - **Architecture:** Decoupled the `radiostream-player` into its own repository and integrated it via iframe.
 - **New Tool:** Added the "Denon CD Player" emulator via iframe.
 - **UI/UX:** Improved the mobile navigation menu's behavior.
+- **New Tool:** Added the "Cymascope" sound visualizer via iframe.

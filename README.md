@@ -2,9 +2,18 @@
 
 Welcome to **LAB: Digital Workshop**, an open-source single-page application (SPA) by [Jason Brain](https://jasonbrain.com). This project is a creative sandbox featuring a growing collection of interactive tools designed to help you work, learn, rest, and play—all in one place. Hosted at [lab.jasonbrain.com](https://lab.jasonbrain.com), it’s built with HTML, CSS, and JavaScript, and styled with a light/dark theme toggle for accessibility.
 
+## Architecture
+
+The application uses a **dual-loading system** to integrate tools:
+
+- **Local Tools (Direct Injection):** Simple, lightweight tools stored in the `/tools` directory are fetched and injected directly into the DOM. This provides a fast, seamless experience for tightly integrated utilities.
+- **Standalone Tools (Iframe Embedding):** More complex or externally-hosted tools are embedded within an `<iframe>`. This sandboxes the tool, preventing CSS or JS conflicts and allowing for independent development and deployment.
+
+This hybrid approach allows the workshop to be both highly extensible and maintainable.
+
 ## Features
 
-- **Modular Toolset:** Tools are organized into four pillars:
+- **Modular Toolset:** Tools are organized into five pillars:
   - **Factory (Work 🔧):** Productivity-focused utilities.
   - **Classroom (Learn 📚):** Educational and insightful calculators.
   - **Retreat (Rest 🌿):** Tools for relaxation and mindfulness.
@@ -18,30 +27,31 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
 ## Current Tools
 
 ### Factory: Work Tools 🔧
-- **Image to WebP Converter:** Convert images to WebP format with drag-and-drop support and ZIP download.
-- **Math Calculator:** Perform basic arithmetic operations with history and clipboard support.
-- **Audio Visualizer:** Create audio visualizations.
-- **Subwoofer Enclosure Design:** Calculate subwoofer box designs.
+- **Image to WebP Converter** (Iframe): Convert images to WebP format with drag-and-drop support and ZIP download.
+- **Math Calculator** (Local): Perform basic arithmetic operations with history and clipboard support.
+- **Audio Visualizer** (Iframe): Create audio visualizations.
+- **Subwoofer Enclosure Design** (Iframe): Calculate subwoofer box designs.
 
 ### Classroom: Learn Tools 📚
-- **Life Path Calculator:** Compute your numerology-based life path number and personality traits.
-- **Gematria Calculator:** Calculate gematria values for words using multiple systems, with customizable options and reduced value display.
-- **Astronomy:** View the current phase of the moon and other astronomical data.
-- **Days Between Dates:** Calculate the number of days between two dates.
-- **Year Progress:** Visualize your year’s progress with a dynamic chart.
+- **Life Path Calculator** (Local): Compute your numerology-based life path number and personality traits.
+- **Gematria Calculator** (Iframe): Calculate gematria values for words using multiple systems.
+- **Astronomy** (Iframe): View the current phase of the moon and other astronomical data.
+- **Days Between Dates** (Local): Calculate the number of days between two dates.
+- **Year Progress** (Iframe): Visualize your year’s progress with a dynamic chart.
 
 ### Retreat: Rest Tools 🌿
-- **Binaural Beats:** Generate binaural beats for focus or relaxation.
+- **Binaural Beats** (Local): Generate binaural beats for focus or relaxation.
+- **Cymascope** (Iframe): Visualize sound vibrations and create intricate cymatic patterns.
 
 ### Arcade: Play Tools 🎮
-- **Radio Stream Player:** Stream your favorite radio stations, including ETN-FM, Psyndora Psytrance, Proton Radio (Melodic House), and PsyStation Progressive Psytrance, with play/pause and volume controls.
-- **Magic 8 Ball:** Get answers to your questions from the digital oracle.
-- **Memory Master:** A classic card-matching memory game.
-- **Denon CD Player:** An emulator for the classic Denon DN-1000F CD player.
+- **Radio Stream Player** (Iframe): Stream your favorite radio stations.
+- **Magic 8 Ball** (Iframe): Get answers to your questions from the digital oracle.
+- **Memory Master** (Iframe): A classic card-matching memory game.
+- **Denon CD Player** (Iframe): An emulator for the classic Denon DN-1000F CD player.
 
-### Info: Project & Links 🧠
-- **About This Project:** Learn about the project's mission, architecture, and development.
-- **Links:** A curated list of personal and professional links.
+### Info: Info 🧠
+- **About This Project** (Local): Learn about the project's mission, architecture, and development process.
+- **Links** (Local): A curated list of relevant personal and professional links.
 
 ## Getting Started
 
@@ -52,8 +62,8 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
 ### Installation
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/[your-username]/lab-digital-workshop.git
-   cd lab-digital-workshop
+   git clone https://github.com/jasonbra1n/lab.jasonbrain.com.git
+   cd lab.jasonbrain.com
    ```
 2. **Open Locally:**
    - Open `index.html` in a browser, or
@@ -68,20 +78,9 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
   2. Enable GitHub Pages in Settings > Pages, selecting the `main` branch and `/` (root).
 
 ## Contributing
-This project is designed to be AI-friendly. For guidelines on development, future plans, and the project's progress, please see the documents in the `/docs` folder:
+Contributions are welcome! This project is designed to be open and AI-friendly.
 
-- **`DEVELOPMENT_GUIDE.md`:** The primary technical guide explaining the architecture and how to contribute.
-- **`ROADMAP.md`:** Outlines the future direction and planned features.
-- **`CHANGELOG.md`:** A log of all notable changes, features, and fixes.
-
----
-
-Contributions are welcome! Whether it’s adding new tools, fixing bugs, or enhancing the UI:
-1. Fork the repository.
-2. Create a branch: `git checkout -b feature/your-tool-name`.
-3. Add your tool in the `tools/` folder (follow the structure: `index.html`, `script.js`, `styles.css`).
-4. Update `index.html` to include your tool in the appropriate pillar.
-5. Submit a pull request with a description of your changes.
+If you'd like to add a new tool, fix a bug, or enhance the UI, please read our **Contributing Guide** to get started. It contains everything you need to know about the development workflow, where to find tasks, and how to submit your changes.
 
 ## License
 

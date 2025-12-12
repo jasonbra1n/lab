@@ -13,6 +13,7 @@ This project is a **Single Page Application (SPA)** built with vanilla HTML, CSS
 ### Key Files
 
 - **`index.html`**: The main application shell. It contains the header, footer, and navigation structure. The `<main id="console-container">` is where tools are dynamically loaded.
+- **`index.html`**: The main application shell. It contains the header, footer, and navigation structure. The `<div id="tool-container">` (inside `<main>`) is where tools are dynamically loaded.
 - **`script.js`**: The application's core engine. It is organized into three main objects:
   - `ThemeManager`: Handles switching between light and dark themes.
   - `ToolLoader`: Manages the dynamic fetching and injection of tool content (HTML, CSS, JS).
@@ -45,6 +46,8 @@ This method is ideal for complex tools, tools hosted externally, or those that r
 5.  It then reads the `data-tool-iframe` attribute from that button and creates an `<iframe>`.
 6.  The `iframe.src` is set to the provided URL.
 7.  The iframe is appended to the `<main id="console-container">`, completely isolating the tool's environment.
+7.  The iframe is appended to the `<div id="tool-container">`, completely isolating the tool's environment.
+8.  Once the iframe loads, `ThemeManager` sends a `postMessage` to the iframe to sync the current theme (light/dark).
 
 **Benefits of Iframe Embedding:**
 - **Isolation:** CSS and JavaScript are sandboxed, preventing conflicts.
@@ -62,10 +65,11 @@ The project follows a consistent structure.
 ├── index.html         # Main application shell
 ├── script.js          # Core application logic
 ├── styles.css         # Global stylesheets
-├── docs/
-│   ├── DEVELOPMENT_GUIDE.md  # (This file) Technical overview
-│   ├── ROADMAP.md            # Future features and plans
-│   └── PROGRESS.md           # Changelog of completed work
+├── CONTRIBUTING.md    # Contribution guidelines
+├── DEVELOPMENT_GUIDE.md  # (This file) Technical overview
+├── ROADMAP.md            # Future features and plans
+├── CHANGELOG.md          # Log of all notable changes
+├── styling_guide.md      # CSS and theme guide for iframed tools
 └── tools/
     └── {tool-name}/
         ├── index.html    # HTML content for the tool
@@ -114,4 +118,6 @@ This is for complex tools, or tools that live in their own repository (like the 
     <button class="tool-btn" data-tool="my-iframe-tool" data-tool-iframe="https://my-tool.example.com">My Iframe Tool</button>
     ```
 
-That's it! The `ToolLoader` will handle creating the iframe and loading your tool when the button is clicked. No other changes to the core application are needed.
+3.  **Implement Theme Syncing (Recommended)**: To ensure your tool's theme stays in sync with the main application, add a `message` event listener to your tool's JavaScript. This is detailed in the `styling_guide.md`.
+
+That's it! The `ToolLoader` will handle creating the iframe and loading your tool when the button is clicked.

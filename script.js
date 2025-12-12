@@ -16,6 +16,7 @@ const ThemeManager = {
         localStorage.setItem('theme', isDark ? 'dark-theme' : 'light-theme');
         this.updateThemeIcon();
         this.dispatchThemeEvent();
+        this.postThemeToIframe();
     },
 
     updateThemeIcon() {
@@ -33,6 +34,17 @@ const ThemeManager = {
         const isDark = document.documentElement.classList.contains('dark-theme');
         const event = new CustomEvent('themeChange', { detail: { isDark } });
         document.dispatchEvent(event);
+    },
+
+    postThemeToIframe() {
+        const iframe = document.querySelector('#tool-container iframe');
+        if (iframe) {
+            const theme = document.documentElement.classList.contains('dark-theme') ? 'dark-theme' : 'light-theme';
+            // Post the message to the iframe's content window
+            // The '*' target is acceptable here for broad compatibility with any tool source.
+            // For higher security, you could restrict this to a specific origin.
+            iframe.contentWindow.postMessage({ type: 'themeChange', theme: theme }, '*');
+        }
     },
 
     addThemeToggle() {
@@ -89,6 +101,12 @@ const ToolLoader = {
             iframe.className = 'tool-container'; // Let the iframe act as the tool container
             this.toolContainer.innerHTML = ''; // Clear previous content
             this.toolContainer.appendChild(iframe);
+
+            // When the iframe is loaded, send the current theme to it
+            iframe.onload = () => {
+                console.log(`Iframe for ${toolName} loaded. Sending initial theme.`);
+                this.postThemeToIframe();
+            };
 
             console.log(`Loaded external tool in iframe: ${toolName}`);
             const event = new CustomEvent('toolLoaded', { detail: { tool: toolName } });
