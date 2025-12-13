@@ -1,16 +1,25 @@
 <div class="container">
     <h2>Life Path Calculator</h2>
-    <label for="dateInput">Enter your Date of Birth:</label>
-    <input type="date" id="dateInput" required>
-    <div id="result" style="display: none;">
-        <p><strong>Life Path Number:</strong> <span id="lifePathNumber"></span></p>
-        <p><strong>Personality:</strong> <span id="personality"></span></p>
-        <p><strong>Birth Card:</strong> <span id="birthCard"></span></p>
+    <p class="tool-description">Discover your Life Path number, a single-digit number that reveals your life's purpose and the challenges you may face.</p>
+    
+    <div class="date-selector">
+        <div class="date-group">
+            <label for="month-select">Month</label>
+            <select id="month-select"></select>
+        </div>
+        <div class="date-group">
+            <label for="day-select">Day</label>
+            <select id="day-select"></select>
+        </div>
+        <div class="date-group">
+            <label for="year-select">Year</label>
+            <select id="year-select"></select>
+        </div>
+    </div>
+
+    <div id="result-card" class="result-card" style="display: none;">
+        <h3>Your Life Path Number is <span id="lifePathNumber"></span></h3>
+        <p id="personality"></p>
+        <p><strong>Your Tarot Birth Card:</strong> <span id="birthCard"></span></p>
     </div>
 </div>
-
-<script>
-    if (typeof initLifePathCalculator === 'function') {
-        initLifePathCalculator();
-    }
-</script>

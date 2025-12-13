@@ -136,6 +136,7 @@ const ToolLoader = {
 
     async loadLocalTool(toolName) {
         try {
+            const excludedFromHeader = ['about-page', 'links']; // Tools that don't get a header
             this.toolContainer.innerHTML = '<div class="loader"></div>'; // Placeholder for CSS loader
 
             // Fetch HTML and CSS concurrently
@@ -155,10 +156,35 @@ const ToolLoader = {
             const wrapper = document.createElement('div');
             wrapper.className = `tool-container ${toolName}-container`;
 
+            // --- Start: Add consistent tool header ---
+            if (!excludedFromHeader.includes(toolName)) {
+                const toolButton = document.querySelector(`.tool-btn[data-tool="${toolName}"]`);
+                const toolTitle = toolButton ? toolButton.textContent : toolName;
+                const aboutSection = doc.querySelector('#tool-about-section');
+
+                const header = document.createElement('div');
+                header.className = 'tool-header';
+
+                const titleEl = document.createElement('h2');
+                titleEl.textContent = toolTitle;
+                header.appendChild(titleEl);
+
+                if (aboutSection) {
+                    const aboutBtn = document.createElement('button');
+                    aboutBtn.className = 'about-btn';
+                    aboutBtn.textContent = 'About';
+                    aboutBtn.onclick = () => {
+                        wrapper.querySelector('#tool-about-section')?.classList.toggle('visible');
+                    };
+                    header.appendChild(aboutBtn);
+                }
+                wrapper.appendChild(header);
+            }
+            // --- End: Add consistent tool header ---
+
             const contentWrapper = document.createElement('div');
             contentWrapper.className = 'tool-content';
             contentWrapper.innerHTML = toolContent.innerHTML;
-
             wrapper.appendChild(contentWrapper);
             this.toolContainer.innerHTML = ''; // Clear loading message
             this.toolContainer.appendChild(wrapper);
@@ -247,6 +273,19 @@ const App = {
 
         // Listen for URL hash changes (back/forward buttons)
         window.addEventListener('hashchange', this.handleInitialLoad.bind(this));
+
+        // Listen for messages from iframes (e.g., theme requests)
+        window.addEventListener('message', this.handleIframeMessage.bind(this));
+    },
+
+    handleIframeMessage(event) {
+        // Only process messages that are objects and have a 'type' property
+        if (typeof event.data === 'object' && event.data.type) {
+            if (event.data.type === 'requestTheme') {
+                // If an iframe requests the theme, send it back
+                ThemeManager.postThemeToIframe();
+            }
+        }
     },
 
     handleNavClick(e) {

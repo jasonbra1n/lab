@@ -25,26 +25,26 @@ To ensure your tool matches the LAB's theme, copy the following CSS variables in
     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     
     /* Light Theme (Default) */
-    --background-color: #f4f4f9;
-    --container-background: #ffffff;
+    --background-color: #f5f5f5; /* Matches main app console bg */
+    --container-background: rgba(255, 255, 255, 0.75); /* Glass effect */
     --text-color: #212529;
     --text-muted-color: #6c757d;
-    --primary-color: #007bff;
-    --primary-color-hover: #0056b3;
-    --border-color: #dee2e6;
+    --primary-color: #2563eb;
+    --primary-color-hover: #1d4ed8;
+    --border-color: rgba(221, 221, 221, 0.5);
     --input-background: #ffffff;
     --input-border-color: #ced4da;
 }
 
 html.dark-theme {
     /* Dark Theme */
-    --background-color: #121212;
-    --container-background: #1e1e1e;
+    --background-color: #1f2937; /* Matches main app console bg */
+    --container-background: rgba(51, 65, 85, 0.6); /* Glass effect */
     --text-color: #e0e0e0;
     --text-muted-color: #888;
-    --primary-color: #4dabf7;
-    --primary-color-hover: #1e88e5;
-    --border-color: #444;
+    --primary-color: #3b82f6;
+    --primary-color-hover: #60a5fa;
+    --border-color: rgba(55, 65, 81, 0.5);
     --input-background: #2c2c2c;
     --input-border-color: #555;
 }
@@ -62,7 +62,26 @@ body {
 
 ---
 
-## 2. Component Styling Examples
+## 2. Glassmorphism Effect
+
+The theme uses a "glassmorphism" (frosted glass) effect for containers. To apply this to your main tool container, use the following styles.
+
+```css
+.your-main-container {
+    background-color: var(--container-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* This is the magic for the frosted glass effect */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari support */
+}
+```
+
+---
+
+## 3. Component Styling Examples
 
 Use these classes as a baseline for common UI elements.
 
@@ -79,7 +98,7 @@ Use these classes as a baseline for common UI elements.
     padding: 0.5rem 1rem;
     font-size: 1rem;
     border-radius: 0.25rem;
-    color: #fff;
+    color: white;
     background-color: var(--primary-color);
     transition: background-color 0.15s ease-in-out;
 }
@@ -109,7 +128,7 @@ textarea {
 
 ---
 
-## 3. Theme Synchronization with Main App
+## 4. Theme Synchronization with Main App
 
 For an iframed tool to automatically switch between light and dark themes when the main LAB app does, it needs to listen for messages from its parent window.
 

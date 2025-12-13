@@ -30,13 +30,6 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
     - [ ] `links` (Local)
     - [ ] `math-calculator` (Local)
       
-  - [ ] **Life Path Calculator Improvements:**
-    - [ ] Improve date picker and overall UI/UX of the Life Path Calculator.
-    - **Plan:**
-      - [ ] Replace the default `<input type="date">` with a more user-friendly, custom, or library-based date picker that is styleable and mobile-friendly.
-      - [ ] Review the layout and presentation of results for clarity and visual appeal.
-      - [ ] Ensure all interactive elements are accessible and have proper focus states.
-
   - [ ] **Local Tool Headers & Info Sections:**
     - [ ] Add a consistent header to each local tool (excluding "Info" pillar tools) with its title and an "About" button.
     - **Plan:**
@@ -65,6 +58,7 @@ This document outlines the development roadmap for the LAB Digital Workshop. It'
 
 ## Recently Completed
 
+- **UI/UX:** Improved the date picker and overall UI/UX for the Life Path Calculator.
 - **UI/UX:** Redesigned the header with a responsive hamburger menu for mobile.
 - **UI/UX:** Implemented a CSS-only loading animation for tool transitions.
 - **Architecture:** Decoupled the `dj-audio-visualizer` into its own repository and integrated it via iframe.

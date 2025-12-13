@@ -4,6 +4,12 @@ Welcome to **LAB: Digital Workshop**, an open-source single-page application (SP
 
 ## Architecture
 
+## Latest Update: v1.0.2 - "Frosted Glass"
+
+We've just rolled out a significant visual refresh, implementing a sleek "glassmorphism" effect across the application for a more modern look and feel.
+
+**[Read the full Release Notes for v1.0.2](release-notes-v1.0.2.md)** to see what's changed. For a complete project history, you can also review the [Changelog](CHANGELOG.md).
+
 The application uses a **dual-loading system** to integrate tools:
 
 - **Local Tools (Direct Injection):** Simple, lightweight tools stored in the `/tools` directory are fetched and injected directly into the DOM. This provides a fast, seamless experience for tightly integrated utilities.

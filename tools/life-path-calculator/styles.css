@@ -1,41 +1,83 @@
 .container {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 20px;
     font-family: var(--font-family, Arial, sans-serif);
     text-align: center;
 }
 
-label {
-    color: var(--text-color);
-    font-size: 1.2em;
-    margin-bottom: 10px;
+.tool-description {
+    max-width: 60ch;
+    margin: 0 auto 10px;
+    opacity: 0.9;
 }
 
-#result {
+.date-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.date-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.date-group label {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.date-group select {
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--input-background, #fff);
+    color: var(--text-color);
+    min-width: 80px;
+}
+
+.result-card {
     margin-top: 20px;
-    padding: 15px;
-    background: var(--card-bg);
+    padding: 20px;
+    background: rgba(0,0,0,0.1); /* Subtle inner card effect */
     border: 1px solid var(--border-color);
     border-radius: 8px;
     color: var(--text-color);
+    text-align: center;
 }
 
-#result p {
-    margin: 10px 0;
-}
-
-#result strong {
+.result-card h3 {
+    margin: 0 0 15px 0;
     color: var(--primary-color);
+    font-size: 1.5em;
 }
 
-#lifePathNumber, #personality, #birthCard {
-    color: var(--text-color);
-    font-weight: bold;
+.result-card p {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+#lifePathNumber {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    font-size: 1.2em;
 }
 
 @media (max-width: 600px) {
-    #dateInput {
-        max-width: 100%;
+    .date-selector {
+        flex-direction: column;
+        align-items: stretch;
     }
 }

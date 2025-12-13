@@ -1,38 +1,61 @@
-function initLifePathCalculator() {
-    const dateInput = document.getElementById('dateInput');
+document.addEventListener('toolLoaded', (e) => {
+    if (e.detail.tool === 'life-path-calculator') {
+        initLifePathCalculator();
+    }
+});
 
-    // Set default date to today
-    const today = new Date();
-    dateInput.value = today.toISOString().split('T')[0];
+function initLifePathCalculator() {
+    const monthSelect = document.getElementById('month-select');
+    const daySelect = document.getElementById('day-select');
+    const yearSelect = document.getElementById('year-select');
+    const resultCard = document.getElementById('result-card');
+
+    // Populate dropdowns
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    months.forEach((month, i) => {
+        monthSelect.options[i] = new Option(month, i + 1);
+    });
+
+    for (let i = 1; i <= 31; i++) {
+        daySelect.options[i - 1] = new Option(i, i);
+    }
+
+    const currentYear = new Date().getFullYear();
+    for (let i = currentYear; i >= 1900; i--) {
+        yearSelect.options[currentYear - i] = new Option(i, i);
+    }
+
+    // Set default date to a sample date
+    monthSelect.value = '1';
+    daySelect.value = '1';
+    yearSelect.value = '1990';
 
     // Initial calculation
     calculateLifePath();
 
     // Recalculate on date change
-    dateInput.addEventListener('input', calculateLifePath);
+    monthSelect.addEventListener('change', calculateLifePath);
+    daySelect.addEventListener('change', calculateLifePath);
+    yearSelect.addEventListener('change', calculateLifePath);
 
     function calculateLifePath() {
-        const dob = dateInput.value;
-        if (!dob) {
-            document.getElementById("result").style.display = "none";
+        const month = parseInt(monthSelect.value);
+        const day = parseInt(daySelect.value);
+        const year = parseInt(yearSelect.value);
+
+        if (!month || !day || !year) {
+            resultCard.style.display = "none";
             return;
         }
 
-        const [year, month, day] = dob.split('-').map(Number);
-        const birthDate = new Date(year, month - 1, day);
-
-        const dayNum = birthDate.getDate();
-        const monthNum = birthDate.getMonth() + 1;
-        const yearNum = birthDate.getFullYear();
-
-        let lifePathNumber = calculateNumerology(dayNum, monthNum, yearNum);
+        let lifePathNumber = calculateNumerology(day, month, year);
         let personality = getPersonality(lifePathNumber);
         let birthCard = getBirthCard(lifePathNumber);
 
         document.getElementById("lifePathNumber").innerText = lifePathNumber;
         document.getElementById("personality").innerText = personality;
         document.getElementById("birthCard").innerText = birthCard;
-        document.getElementById("result").style.display = "block";
+        resultCard.style.display = "block";
     }
 
     function calculateNumerology(day, month, year) {
@@ -90,8 +113,4 @@ function initLifePathCalculator() {
         };
         return cards[lifePathNumber] || "Unknown Card";
     }
-}
-
-if (document.getElementById('dateInput')) {
-    initLifePathCalculator();
 }
