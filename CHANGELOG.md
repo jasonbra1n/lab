@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [1.0.2] - 2025-12-15
+## [1.0.2] - 2025-12-12
 
 ### Changed
 - **UI/UX:** Implemented a "glassmorphism" (frosted glass) effect for tool containers to create a more modern, layered appearance across the application.
